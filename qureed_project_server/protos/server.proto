@@ -1,0 +1,167 @@
+syntax = "proto3";
+import "google/protobuf/struct.proto"
+
+package qureed_project_server;
+
+service ServerManagement {
+  // Server Status
+  rpc Status (StatusRequest) returns (StatusResponse);
+
+  // Server Terminate
+  rpc Terminate (TerminateRequest) returns (TerminateResponse);
+}
+
+service VenvManagement {
+  // Freeze
+  rpc Freeze (FreezeRequest) returns (FreezeResponse);
+
+  // Install
+  rpc Install (InstallRequest) returns (InstallResponse);
+
+  // Uninstall
+  rpc Uninstall (UninstallRequest) returns (UninstallResponse);
+}
+
+service QuReedManagement {
+
+  // Get a list of all available icons
+  rpc GetIcons (GetIconsRequest) returns (GetIconsResponse);
+
+  // Get a list of all implemented devices
+  rpc GetDevices (GetDevicesRequest) returns (GetDevicesResponse);
+
+  // Request Opening a board
+  rpc OpenBoard (OpenBoardRequest) returns (OpenBoardResponse);
+
+  // Request the board to be saved
+  rpc SaveBoard (SaveBoardRequest) returns (SaveBoardResponse);
+
+  // Add Device to the currently opened board
+  rpc AddDevice (AddDeviceRequest) returns (AddDeviceResponse);
+
+  // Remove Device from the currently opened board
+  rpc RemoveDevice (RemoveDeviceRequest) returns (RemoveDeviceResponse);
+
+  // Create Connection between two devices
+  rpc ConnectDevices (ConnectDevicesRequest) returns (ConnectDevicesResponse);
+
+  // Disconnects the devices
+  rpc DisconnectDevices (DisconnectDevicesRequest) returns (DisconnectDevicesResponse);
+
+}
+
+// Server Management Messages
+
+message StatusRequest {
+}
+
+message StatusResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message TerminateRequest {
+}
+
+message TerminateResponse {
+  string status = 1;
+  string message = 2;
+}
+
+// Venv Management Messages
+message FreezeRequest {
+}
+
+message FreezeResponse {
+  string status = 1;
+  string packages = 2;
+}
+
+message InstallRequest {
+  string package = 1;
+}
+
+message InstallResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message UninstallRequest {
+  string package = 1;
+}
+
+message UninstallResponse {
+  string status = 1;
+  string message = 2;
+}
+
+// QuReedManagement Messages
+message GetIconsRequest {
+}
+
+message GetIconsResponse {
+  string status = 1;
+  google.protobuf.Struct icons = 2;
+}
+
+message GetDevicesRequest {
+}
+
+message GetDevicesResponse {
+  string status = 1;
+  google.protobuf.Struct devices = 2;
+}
+
+message OpenBoardRequest {
+  string board = 1;
+}
+
+message OpenBoardResponse {
+  string status = 1;
+}
+
+message SaveBoardRequest {
+  string board = 1;
+}
+
+message SaveBoardResponse {
+  string status = 1;
+}
+
+message AddDeviceRequest {
+  google.protobuf.Struct device = 1;
+}
+
+message AddDeviceResponse {
+  string status = 1;
+  string device_uuid = 2;
+  string message = 3;
+}
+
+message RemoveDeviceRequest {
+  string device_uuid = 1;
+}
+
+message ConnectDevicesRequest {
+  string device_uuid_1 = 1;
+  string device_port_1 = 2;
+  string device_uuid_2 = 3;
+  string device_port_2 = 4;
+}
+
+message ConnectDevicesResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message DisconnectDevicesRequest {
+  string device_uuid_1 = 1;
+  string device_port_1 = 2;
+  string device_uuid_2 = 3;
+  string device_port_2 = 4;
+}
+
+message DisconnectDevicesResponse {
+  string status = 1;
+  string message = 2;
+}
