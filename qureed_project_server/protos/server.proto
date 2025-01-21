@@ -12,6 +12,7 @@ service ServerManagement {
 }
 
 service VenvManagement {
+  rpc Connect (VenvConnectRequest) returns (VenvConnectResponse);
   // Freeze
   rpc Freeze (FreezeRequest) returns (FreezeResponse);
 
@@ -69,6 +70,15 @@ message TerminateResponse {
 }
 
 // Venv Management Messages
+message VenvConnectRequest {
+  string venv_path = 1;  
+}
+
+message VenvConnectResponse {
+  string status = 1;
+  string message = 2;
+}
+
 message FreezeRequest {
 }
 

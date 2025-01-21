@@ -151,6 +151,11 @@ class VenvManagementStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.Connect = channel.unary_unary(
+                '/qureed_project_server.VenvManagement/Connect',
+                request_serializer=server__pb2.VenvConnectRequest.SerializeToString,
+                response_deserializer=server__pb2.VenvConnectResponse.FromString,
+                _registered_method=True)
         self.Freeze = channel.unary_unary(
                 '/qureed_project_server.VenvManagement/Freeze',
                 request_serializer=server__pb2.FreezeRequest.SerializeToString,
@@ -170,6 +175,12 @@ class VenvManagementStub(object):
 
 class VenvManagementServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def Connect(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def Freeze(self, request, context):
         """Freeze
@@ -195,6 +206,11 @@ class VenvManagementServicer(object):
 
 def add_VenvManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Connect': grpc.unary_unary_rpc_method_handler(
+                    servicer.Connect,
+                    request_deserializer=server__pb2.VenvConnectRequest.FromString,
+                    response_serializer=server__pb2.VenvConnectResponse.SerializeToString,
+            ),
             'Freeze': grpc.unary_unary_rpc_method_handler(
                     servicer.Freeze,
                     request_deserializer=server__pb2.FreezeRequest.FromString,
@@ -220,6 +236,33 @@ def add_VenvManagementServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class VenvManagement(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def Connect(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.VenvManagement/Connect',
+            server__pb2.VenvConnectRequest.SerializeToString,
+            server__pb2.VenvConnectResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def Freeze(request,
