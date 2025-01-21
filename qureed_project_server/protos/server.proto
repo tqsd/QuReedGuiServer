@@ -85,6 +85,7 @@ message FreezeRequest {
 message FreezeResponse {
   string status = 1;
   string packages = 2;
+  string message = 3;
 }
 
 message InstallRequest {
