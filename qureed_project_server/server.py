@@ -14,7 +14,7 @@ def serve(port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     
     # Add services to the server
-    server_pb2_grpc.add_ServerManagementServicer_to_server(ServerManagementServicer(), server)
+    server_pb2_grpc.add_ServerManagementServicer_to_server(ServerManagementServicer(server), server)
     server_pb2_grpc.add_VenvManagementServicer_to_server(VenvManagementServicer(), server)
     
     # Bind to a port
