@@ -1,5 +1,5 @@
 syntax = "proto3";
-import "google/protobuf/struct.proto"
+import "google/protobuf/struct.proto";
 
 package qureed_project_server;
 
@@ -140,6 +140,11 @@ message AddDeviceResponse {
 
 message RemoveDeviceRequest {
   string device_uuid = 1;
+}
+
+message RemoveDeviceResponce {
+  string status = 1;
+  string message = 2;
 }
 
 message ConnectDevicesRequest {
