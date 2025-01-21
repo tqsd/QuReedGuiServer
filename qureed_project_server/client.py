@@ -11,31 +11,14 @@ def run():
         
         # Connect to the Venv
         venv_connect_response = venv_stub.Connect(
-            server_pb2.VenvConnectRequest(venv_path="/home/simon/.virtualenvs/qrgs/"))
+            server_pb2.VenvConnectRequest(venv_path="/home/simon/tmp/c/.venv/"))
         print(venv_connect_response)
         
-        # Call ServerManagement Status
-        status_response = server_stub.Status(server_pb2.StatusRequest())
-        print(f"Status: {status_response.status}, Message: {status_response.message}")
         
         # Call VenvManagement Freeze
         freeze_response = venv_stub.Freeze(server_pb2.FreezeRequest())
         print(f"Freeze Packages:\n{freeze_response.packages}")
 
-        # Call install
-        install_response = venv_stub.Install(server_pb2.InstallRequest(package="photon_weave"))
-        print(f"Install Package: install_response")
-        
-        freeze_response = venv_stub.Freeze(server_pb2.FreezeRequest())
-        print(f"Freeze Packages:\n{freeze_response.packages}")
-
-        # Call Uninstall
-        uninstall_response = venv_stub.Uninstall(server_pb2.UninstallRequest(package="photon_weave"))
-        print(f"Uninstall: {uninstall_response}")
-
-        # Call Freeze again 
-        freeze_response = venv_stub.Freeze(server_pb2.FreezeRequest())
-        print(f"Freeze Packages:\n{freeze_response.packages}")
 
 if __name__ == "__main__":
     run()
