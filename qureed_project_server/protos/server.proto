@@ -142,7 +142,7 @@ message RemoveDeviceRequest {
   string device_uuid = 1;
 }
 
-message RemoveDeviceResponce {
+message RemoveDeviceResponse {
   string status = 1;
   string message = 2;
 }
