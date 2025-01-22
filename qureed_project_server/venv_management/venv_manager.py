@@ -1,5 +1,9 @@
 from virtualenvapi.manage import VirtualEnvironment
 
+from qureed_project_server.logic_modules import LogicModuleEnum, LogicModuleHandler
+
+LMH = LogicModuleHandler()
+
 class VenvManager:
     _instance = None
 
@@ -11,6 +15,7 @@ class VenvManager:
     def __init__(self):
         if not hasattr(self, "initialized"):
             self.venv = None
+            LMH.register(LogicModuleEnum.VENV_MANAGER, self)
             self.initialized = True
 
     def connect(self, path):
