@@ -360,10 +360,20 @@ class QuReedManagementStub(object):
                 request_serializer=server__pb2.GetIconsRequest.SerializeToString,
                 response_deserializer=server__pb2.GetIconsResponse.FromString,
                 _registered_method=True)
+        self.GetIcon = channel.unary_unary(
+                '/qureed_project_server.QuReedManagement/GetIcon',
+                request_serializer=server__pb2.GetIconRequest.SerializeToString,
+                response_deserializer=server__pb2.GetIconResponse.FromString,
+                _registered_method=True)
         self.GetDevices = channel.unary_unary(
                 '/qureed_project_server.QuReedManagement/GetDevices',
                 request_serializer=server__pb2.GetDevicesRequest.SerializeToString,
                 response_deserializer=server__pb2.GetDevicesResponse.FromString,
+                _registered_method=True)
+        self.GetDevice = channel.unary_unary(
+                '/qureed_project_server.QuReedManagement/GetDevice',
+                request_serializer=server__pb2.GetDeviceRequest.SerializeToString,
+                response_deserializer=server__pb2.GetDeviceResponse.FromString,
                 _registered_method=True)
         self.OpenBoard = channel.unary_unary(
                 '/qureed_project_server.QuReedManagement/OpenBoard',
@@ -407,8 +417,22 @@ class QuReedManagementServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetIcon(self, request, context):
+        """Get a single icon
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetDevices(self, request, context):
         """Get a list of all implemented devices
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetDevice(self, request, context):
+        """Get a single Device (built-in or custom)
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -464,10 +488,20 @@ def add_QuReedManagementServicer_to_server(servicer, server):
                     request_deserializer=server__pb2.GetIconsRequest.FromString,
                     response_serializer=server__pb2.GetIconsResponse.SerializeToString,
             ),
+            'GetIcon': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetIcon,
+                    request_deserializer=server__pb2.GetIconRequest.FromString,
+                    response_serializer=server__pb2.GetIconResponse.SerializeToString,
+            ),
             'GetDevices': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDevices,
                     request_deserializer=server__pb2.GetDevicesRequest.FromString,
                     response_serializer=server__pb2.GetDevicesResponse.SerializeToString,
+            ),
+            'GetDevice': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetDevice,
+                    request_deserializer=server__pb2.GetDeviceRequest.FromString,
+                    response_serializer=server__pb2.GetDeviceResponse.SerializeToString,
             ),
             'OpenBoard': grpc.unary_unary_rpc_method_handler(
                     servicer.OpenBoard,
@@ -538,6 +572,33 @@ class QuReedManagement(object):
             _registered_method=True)
 
     @staticmethod
+    def GetIcon(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedManagement/GetIcon',
+            server__pb2.GetIconRequest.SerializeToString,
+            server__pb2.GetIconResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def GetDevices(request,
             target,
             options=(),
@@ -554,6 +615,33 @@ class QuReedManagement(object):
             '/qureed_project_server.QuReedManagement/GetDevices',
             server__pb2.GetDevicesRequest.SerializeToString,
             server__pb2.GetDevicesResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetDevice(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedManagement/GetDevice',
+            server__pb2.GetDeviceRequest.SerializeToString,
+            server__pb2.GetDeviceResponse.FromString,
             options,
             channel_credentials,
             insecure,
