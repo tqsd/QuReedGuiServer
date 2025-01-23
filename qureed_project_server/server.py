@@ -5,6 +5,7 @@ import server_pb2_grpc
 
 from qureed_project_server.venv_management import VenvManagementServicer
 from qureed_project_server.server_management import ServerManagementServicer
+from qureed_project_server.qureed_manager import QuReemManagementService
 
 
 def serve(port):
@@ -15,6 +16,9 @@ def serve(port):
         ServerManagementServicer(server), server)
     server_pb2_grpc.add_VenvManagementServicer_to_server(
         VenvManagementServicer(), server)
+    server_pb2_grpc.add_QuReedManagementServicer_to_server(
+        QuReemManagementService(), server
+    )
 
     # Bind to a port
     server.add_insecure_port(f"[::]:{port}")

@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import struct_pb2 as google_dot_protobuf_dot_struct__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cserver.proto\x12\x15qureed_project_server\x1a\x1cgoogle/protobuf/struct.proto\"\x0f\n\rStatusRequest\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x12\n\x10TerminateRequest\"4\n\x11TerminateResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\'\n\x12VenvConnectRequest\x12\x11\n\tvenv_path\x18\x01 \x01(\t\"6\n\x13VenvConnectResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x0f\n\rFreezeRequest\"C\n\x0e\x46reezeResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08packages\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"!\n\x0eInstallRequest\x12\x0f\n\x07package\x18\x01 \x01(\t\"2\n\x0fInstallResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"#\n\x10UninstallRequest\x12\x0f\n\x07package\x18\x01 \x01(\t\"4\n\x11UninstallResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0eGetIconRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"1\n\x0fGetIconResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x61\x62s_path\x18\x02 \x01(\t\"\x11\n\x0fGetIconsRequest\"J\n\x10GetIconsResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12&\n\x05icons\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"=\n\x04Port\x12\r\n\x05label\x18\x01 \x01(\t\x12\x13\n\x0bsignal_type\x18\x02 \x01(\t\x12\x11\n\tdirection\x18\x03 \x01(\t\"p\n\x06\x44\x65vice\x12\x12\n\nclass_name\x18\x01 \x01(\t\x12\x10\n\x08gui_name\x18\x02 \x01(\t\x12\x14\n\x0cmodule_class\x18\x03 \x01(\t\x12*\n\x05ports\x18\x04 \x03(\x0b\x32\x1b.qureed_project_server.Port\"\x13\n\x11GetDevicesRequest\"T\n\x12GetDevicesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12.\n\x07\x64\x65vices\x18\x03 \x03(\x0b\x32\x1d.qureed_project_server.Device\"<\n\x10GetDeviceRequest\x12\x14\n\x0cmodule_class\x18\x01 \x01(\t\x12\x12\n\nclass_name\x18\x02 \x01(\t\"S\n\x11GetDeviceResponse\x12-\n\x06\x64\x65vice\x18\x01 \x01(\x0b\x32\x1d.qureed_project_server.Device\x12\x0f\n\x07message\x18\x02 \x01(\t\"!\n\x10OpenBoardRequest\x12\r\n\x05\x62oard\x18\x01 \x01(\t\"#\n\x11OpenBoardResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\"!\n\x10SaveBoardRequest\x12\r\n\x05\x62oard\x18\x01 \x01(\t\"#\n\x11SaveBoardResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\";\n\x10\x41\x64\x64\x44\x65viceRequest\x12\'\n\x06\x64\x65vice\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\"I\n\x11\x41\x64\x64\x44\x65viceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_uuid\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"*\n\x13RemoveDeviceRequest\x12\x13\n\x0b\x64\x65vice_uuid\x18\x01 \x01(\t\"7\n\x14RemoveDeviceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"s\n\x15\x43onnectDevicesRequest\x12\x15\n\rdevice_uuid_1\x18\x01 \x01(\t\x12\x15\n\rdevice_port_1\x18\x02 \x01(\t\x12\x15\n\rdevice_uuid_2\x18\x03 \x01(\t\x12\x15\n\rdevice_port_2\x18\x04 \x01(\t\"9\n\x16\x43onnectDevicesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"v\n\x18\x44isconnectDevicesRequest\x12\x15\n\rdevice_uuid_1\x18\x01 \x01(\t\x12\x15\n\rdevice_port_1\x18\x02 \x01(\t\x12\x15\n\rdevice_uuid_2\x18\x03 \x01(\t\x12\x15\n\rdevice_port_2\x18\x04 \x01(\t\"<\n\x19\x44isconnectDevicesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t2\xc9\x01\n\x10ServerManagement\x12U\n\x06Status\x12$.qureed_project_server.StatusRequest\x1a%.qureed_project_server.StatusResponse\x12^\n\tTerminate\x12\'.qureed_project_server.TerminateRequest\x1a(.qureed_project_server.TerminateResponse2\x83\x03\n\x0eVenvManagement\x12`\n\x07\x43onnect\x12).qureed_project_server.VenvConnectRequest\x1a*.qureed_project_server.VenvConnectResponse\x12U\n\x06\x46reeze\x12$.qureed_project_server.FreezeRequest\x1a%.qureed_project_server.FreezeResponse\x12X\n\x07Install\x12%.qureed_project_server.InstallRequest\x1a&.qureed_project_server.InstallResponse\x12^\n\tUninstall\x12\'.qureed_project_server.UninstallRequest\x1a(.qureed_project_server.UninstallResponse2\xfc\x07\n\x10QuReedManagement\x12[\n\x08GetIcons\x12&.qureed_project_server.GetIconsRequest\x1a\'.qureed_project_server.GetIconsResponse\x12X\n\x07GetIcon\x12%.qureed_project_server.GetIconRequest\x1a&.qureed_project_server.GetIconResponse\x12\x61\n\nGetDevices\x12(.qureed_project_server.GetDevicesRequest\x1a).qureed_project_server.GetDevicesResponse\x12^\n\tGetDevice\x12\'.qureed_project_server.GetDeviceRequest\x1a(.qureed_project_server.GetDeviceResponse\x12^\n\tOpenBoard\x12\'.qureed_project_server.OpenBoardRequest\x1a(.qureed_project_server.OpenBoardResponse\x12^\n\tSaveBoard\x12\'.qureed_project_server.SaveBoardRequest\x1a(.qureed_project_server.SaveBoardResponse\x12^\n\tAddDevice\x12\'.qureed_project_server.AddDeviceRequest\x1a(.qureed_project_server.AddDeviceResponse\x12g\n\x0cRemoveDevice\x12*.qureed_project_server.RemoveDeviceRequest\x1a+.qureed_project_server.RemoveDeviceResponse\x12m\n\x0e\x43onnectDevices\x12,.qureed_project_server.ConnectDevicesRequest\x1a-.qureed_project_server.ConnectDevicesResponse\x12v\n\x11\x44isconnectDevices\x12/.qureed_project_server.DisconnectDevicesRequest\x1a\x30.qureed_project_server.DisconnectDevicesResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cserver.proto\x12\x15qureed_project_server\x1a\x1cgoogle/protobuf/struct.proto\"\x0f\n\rStatusRequest\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x12\n\x10TerminateRequest\"4\n\x11TerminateResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\'\n\x12VenvConnectRequest\x12\x11\n\tvenv_path\x18\x01 \x01(\t\"6\n\x13VenvConnectResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x0f\n\rFreezeRequest\"C\n\x0e\x46reezeResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08packages\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"!\n\x0eInstallRequest\x12\x0f\n\x07package\x18\x01 \x01(\t\"2\n\x0fInstallResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"#\n\x10UninstallRequest\x12\x0f\n\x07package\x18\x01 \x01(\t\"4\n\x11UninstallResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0eGetIconRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"1\n\x0fGetIconResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x61\x62s_path\x18\x02 \x01(\t\"\x11\n\x0fGetIconsRequest\"J\n\x10GetIconsResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12&\n\x05icons\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"=\n\x04Port\x12\r\n\x05label\x18\x01 \x01(\t\x12\x13\n\x0bsignal_type\x18\x02 \x01(\t\x12\x11\n\tdirection\x18\x03 \x01(\t\"p\n\x06\x44\x65vice\x12\x12\n\nclass_name\x18\x01 \x01(\t\x12\x10\n\x08gui_name\x18\x02 \x01(\t\x12\x14\n\x0cmodule_class\x18\x03 \x01(\t\x12*\n\x05ports\x18\x04 \x03(\x0b\x32\x1b.qureed_project_server.Port\"\x13\n\x11GetDevicesRequest\"e\n\x12GetDevicesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12.\n\x07\x64\x65vices\x18\x03 \x03(\x0b\x32\x1d.qureed_project_server.Device\"<\n\x10GetDeviceRequest\x12\x14\n\x0cmodule_class\x18\x01 \x01(\t\x12\x12\n\nclass_name\x18\x02 \x01(\t\"S\n\x11GetDeviceResponse\x12-\n\x06\x64\x65vice\x18\x01 \x01(\x0b\x32\x1d.qureed_project_server.Device\x12\x0f\n\x07message\x18\x02 \x01(\t\"!\n\x10OpenBoardRequest\x12\r\n\x05\x62oard\x18\x01 \x01(\t\"#\n\x11OpenBoardResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\"!\n\x10SaveBoardRequest\x12\r\n\x05\x62oard\x18\x01 \x01(\t\"#\n\x11SaveBoardResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\";\n\x10\x41\x64\x64\x44\x65viceRequest\x12\'\n\x06\x64\x65vice\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\"I\n\x11\x41\x64\x64\x44\x65viceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_uuid\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"*\n\x13RemoveDeviceRequest\x12\x13\n\x0b\x64\x65vice_uuid\x18\x01 \x01(\t\"7\n\x14RemoveDeviceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"s\n\x15\x43onnectDevicesRequest\x12\x15\n\rdevice_uuid_1\x18\x01 \x01(\t\x12\x15\n\rdevice_port_1\x18\x02 \x01(\t\x12\x15\n\rdevice_uuid_2\x18\x03 \x01(\t\x12\x15\n\rdevice_port_2\x18\x04 \x01(\t\"9\n\x16\x43onnectDevicesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"v\n\x18\x44isconnectDevicesRequest\x12\x15\n\rdevice_uuid_1\x18\x01 \x01(\t\x12\x15\n\rdevice_port_1\x18\x02 \x01(\t\x12\x15\n\rdevice_uuid_2\x18\x03 \x01(\t\x12\x15\n\rdevice_port_2\x18\x04 \x01(\t\"<\n\x19\x44isconnectDevicesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t2\xc9\x01\n\x10ServerManagement\x12U\n\x06Status\x12$.qureed_project_server.StatusRequest\x1a%.qureed_project_server.StatusResponse\x12^\n\tTerminate\x12\'.qureed_project_server.TerminateRequest\x1a(.qureed_project_server.TerminateResponse2\x83\x03\n\x0eVenvManagement\x12`\n\x07\x43onnect\x12).qureed_project_server.VenvConnectRequest\x1a*.qureed_project_server.VenvConnectResponse\x12U\n\x06\x46reeze\x12$.qureed_project_server.FreezeRequest\x1a%.qureed_project_server.FreezeResponse\x12X\n\x07Install\x12%.qureed_project_server.InstallRequest\x1a&.qureed_project_server.InstallResponse\x12^\n\tUninstall\x12\'.qureed_project_server.UninstallRequest\x1a(.qureed_project_server.UninstallResponse2\xfc\x07\n\x10QuReedManagement\x12[\n\x08GetIcons\x12&.qureed_project_server.GetIconsRequest\x1a\'.qureed_project_server.GetIconsResponse\x12X\n\x07GetIcon\x12%.qureed_project_server.GetIconRequest\x1a&.qureed_project_server.GetIconResponse\x12\x61\n\nGetDevices\x12(.qureed_project_server.GetDevicesRequest\x1a).qureed_project_server.GetDevicesResponse\x12^\n\tGetDevice\x12\'.qureed_project_server.GetDeviceRequest\x1a(.qureed_project_server.GetDeviceResponse\x12^\n\tOpenBoard\x12\'.qureed_project_server.OpenBoardRequest\x1a(.qureed_project_server.OpenBoardResponse\x12^\n\tSaveBoard\x12\'.qureed_project_server.SaveBoardRequest\x1a(.qureed_project_server.SaveBoardResponse\x12^\n\tAddDevice\x12\'.qureed_project_server.AddDeviceRequest\x1a(.qureed_project_server.AddDeviceResponse\x12g\n\x0cRemoveDevice\x12*.qureed_project_server.RemoveDeviceRequest\x1a+.qureed_project_server.RemoveDeviceResponse\x12m\n\x0e\x43onnectDevices\x12,.qureed_project_server.ConnectDevicesRequest\x1a-.qureed_project_server.ConnectDevicesResponse\x12v\n\x11\x44isconnectDevices\x12/.qureed_project_server.DisconnectDevicesRequest\x1a\x30.qureed_project_server.DisconnectDevicesResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -71,39 +71,39 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETDEVICESREQUEST']._serialized_start=927
   _globals['_GETDEVICESREQUEST']._serialized_end=946
   _globals['_GETDEVICESRESPONSE']._serialized_start=948
-  _globals['_GETDEVICESRESPONSE']._serialized_end=1032
-  _globals['_GETDEVICEREQUEST']._serialized_start=1034
-  _globals['_GETDEVICEREQUEST']._serialized_end=1094
-  _globals['_GETDEVICERESPONSE']._serialized_start=1096
-  _globals['_GETDEVICERESPONSE']._serialized_end=1179
-  _globals['_OPENBOARDREQUEST']._serialized_start=1181
-  _globals['_OPENBOARDREQUEST']._serialized_end=1214
-  _globals['_OPENBOARDRESPONSE']._serialized_start=1216
-  _globals['_OPENBOARDRESPONSE']._serialized_end=1251
-  _globals['_SAVEBOARDREQUEST']._serialized_start=1253
-  _globals['_SAVEBOARDREQUEST']._serialized_end=1286
-  _globals['_SAVEBOARDRESPONSE']._serialized_start=1288
-  _globals['_SAVEBOARDRESPONSE']._serialized_end=1323
-  _globals['_ADDDEVICEREQUEST']._serialized_start=1325
-  _globals['_ADDDEVICEREQUEST']._serialized_end=1384
-  _globals['_ADDDEVICERESPONSE']._serialized_start=1386
-  _globals['_ADDDEVICERESPONSE']._serialized_end=1459
-  _globals['_REMOVEDEVICEREQUEST']._serialized_start=1461
-  _globals['_REMOVEDEVICEREQUEST']._serialized_end=1503
-  _globals['_REMOVEDEVICERESPONSE']._serialized_start=1505
-  _globals['_REMOVEDEVICERESPONSE']._serialized_end=1560
-  _globals['_CONNECTDEVICESREQUEST']._serialized_start=1562
-  _globals['_CONNECTDEVICESREQUEST']._serialized_end=1677
-  _globals['_CONNECTDEVICESRESPONSE']._serialized_start=1679
-  _globals['_CONNECTDEVICESRESPONSE']._serialized_end=1736
-  _globals['_DISCONNECTDEVICESREQUEST']._serialized_start=1738
-  _globals['_DISCONNECTDEVICESREQUEST']._serialized_end=1856
-  _globals['_DISCONNECTDEVICESRESPONSE']._serialized_start=1858
-  _globals['_DISCONNECTDEVICESRESPONSE']._serialized_end=1918
-  _globals['_SERVERMANAGEMENT']._serialized_start=1921
-  _globals['_SERVERMANAGEMENT']._serialized_end=2122
-  _globals['_VENVMANAGEMENT']._serialized_start=2125
-  _globals['_VENVMANAGEMENT']._serialized_end=2512
-  _globals['_QUREEDMANAGEMENT']._serialized_start=2515
-  _globals['_QUREEDMANAGEMENT']._serialized_end=3535
+  _globals['_GETDEVICESRESPONSE']._serialized_end=1049
+  _globals['_GETDEVICEREQUEST']._serialized_start=1051
+  _globals['_GETDEVICEREQUEST']._serialized_end=1111
+  _globals['_GETDEVICERESPONSE']._serialized_start=1113
+  _globals['_GETDEVICERESPONSE']._serialized_end=1196
+  _globals['_OPENBOARDREQUEST']._serialized_start=1198
+  _globals['_OPENBOARDREQUEST']._serialized_end=1231
+  _globals['_OPENBOARDRESPONSE']._serialized_start=1233
+  _globals['_OPENBOARDRESPONSE']._serialized_end=1268
+  _globals['_SAVEBOARDREQUEST']._serialized_start=1270
+  _globals['_SAVEBOARDREQUEST']._serialized_end=1303
+  _globals['_SAVEBOARDRESPONSE']._serialized_start=1305
+  _globals['_SAVEBOARDRESPONSE']._serialized_end=1340
+  _globals['_ADDDEVICEREQUEST']._serialized_start=1342
+  _globals['_ADDDEVICEREQUEST']._serialized_end=1401
+  _globals['_ADDDEVICERESPONSE']._serialized_start=1403
+  _globals['_ADDDEVICERESPONSE']._serialized_end=1476
+  _globals['_REMOVEDEVICEREQUEST']._serialized_start=1478
+  _globals['_REMOVEDEVICEREQUEST']._serialized_end=1520
+  _globals['_REMOVEDEVICERESPONSE']._serialized_start=1522
+  _globals['_REMOVEDEVICERESPONSE']._serialized_end=1577
+  _globals['_CONNECTDEVICESREQUEST']._serialized_start=1579
+  _globals['_CONNECTDEVICESREQUEST']._serialized_end=1694
+  _globals['_CONNECTDEVICESRESPONSE']._serialized_start=1696
+  _globals['_CONNECTDEVICESRESPONSE']._serialized_end=1753
+  _globals['_DISCONNECTDEVICESREQUEST']._serialized_start=1755
+  _globals['_DISCONNECTDEVICESREQUEST']._serialized_end=1873
+  _globals['_DISCONNECTDEVICESRESPONSE']._serialized_start=1875
+  _globals['_DISCONNECTDEVICESRESPONSE']._serialized_end=1935
+  _globals['_SERVERMANAGEMENT']._serialized_start=1938
+  _globals['_SERVERMANAGEMENT']._serialized_end=2139
+  _globals['_VENVMANAGEMENT']._serialized_start=2142
+  _globals['_VENVMANAGEMENT']._serialized_end=2529
+  _globals['_QUREEDMANAGEMENT']._serialized_start=2532
+  _globals['_QUREEDMANAGEMENT']._serialized_end=3552
 # @@protoc_insertion_point(module_scope)

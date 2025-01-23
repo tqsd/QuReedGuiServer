@@ -15,10 +15,12 @@ class VenvManager:
     def __init__(self):
         if not hasattr(self, "initialized"):
             self.venv = None
+            self.path = None
             LMH.register(LogicModuleEnum.VENV_MANAGER, self)
             self.initialized = True
 
     def connect(self, path):
+        self.path = path
         self.venv = VirtualEnvironment(path)
 
     def install(self, package):

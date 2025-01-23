@@ -150,6 +150,7 @@ message GetDevicesRequest {
 
 message GetDevicesResponse {
   string status = 1;
+  string message = 2;
   repeated Device devices = 3;
 }
 
