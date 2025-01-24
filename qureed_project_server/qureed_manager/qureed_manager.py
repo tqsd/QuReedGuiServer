@@ -61,7 +61,7 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
-                        device_message = self.create_device_message(module)
+                        device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
 
             # Getting Custom Devices
@@ -76,7 +76,7 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
-                        device_message = self.create_device_message(module)
+                        device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
                         
             
@@ -86,7 +86,39 @@ class QuReedManager:
             print(e)
             traceback.print_exc()
 
-    def create_device_message(self, module):
+    def create_device_message(self, device_class):
+        class_name = device_class.__name__
+        print(class_name)
+        module_class = f"{device_class.__module__}.{device_class.__qualname__}"
+        print(module_class)
+        gui_name = getattr(device_class, "gui_name", None)
+        if not isinstance(gui_name, str):
+            gui_name = class_name
+
+        
+        ports = []
+        if hasattr(class_name, "ports"):
+            if isinstance(attr.ports, dict):
+                for port_name, port in attr.ports.items():
+                    ports.append(server_pb2.Port(
+                        label=port.label,
+                        direction=port.direction,
+                        signal_type=str(port.signal_type.__name__)
+                    ))
+
+        device_msg = server_pb2.Device(
+            class_name=class_name,
+            gui_name=gui_name,
+            module_class=module_class,
+            ports=ports,
+            )
+
+        return device_msg
+        
+        
+
+
+    def create_device_message_from_module(self, module):
         device_classes = []
         device_messages = []
 
@@ -136,10 +168,9 @@ class QuReedManager:
         with open(scheme, "r") as f:
             data = json.load(f)
 
-        
 
         print("We have the data, is there an error")
-        BM.open_scheme(data)
+        return BM.open_scheme(data)
 
     def get_class(self, mc: str):
         """

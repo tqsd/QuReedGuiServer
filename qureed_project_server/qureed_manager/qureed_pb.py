@@ -26,10 +26,12 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
     def OpenBoard(self, request, context):
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
         try:
-            QM.open_scheme(request.board)
+            devices_msg, connections_msg = QM.open_scheme(request.board)
 
             return server_pb2.OpenBoardResponse(
-                status="success"
+                status="success",
+                devices=devices_msg,
+                connections=connections_msg
                 )
         except Exception as e:
             traceback.print_exc()
