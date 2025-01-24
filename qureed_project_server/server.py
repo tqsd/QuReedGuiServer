@@ -1,8 +1,8 @@
 from concurrent import futures
 import argparse
 import grpc
-import server_pb2_grpc
 
+from qureed_project_server import server_pb2_grpc
 from qureed_project_server.venv_management import VenvManagementServicer
 from qureed_project_server.server_management import ServerManagementServicer
 from qureed_project_server.qureed_manager import QuReemManagementService
@@ -27,9 +27,13 @@ def serve(port):
     server.wait_for_termination()
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, required=True)
     args = parser.parse_args()
 
     serve(args.port)
+
+
+if __name__ == "__main__":
+    main()

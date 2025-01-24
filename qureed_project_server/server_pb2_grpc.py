@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import server_pb2 as server__pb2
+from qureed_project_server import server_pb2 as server__pb2
 
 GRPC_GENERATED_VERSION = '1.69.0'
 GRPC_VERSION = grpc.__version__

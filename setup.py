@@ -18,5 +18,8 @@ setup(
         "protobuf"
     ],
     entry_points={
+        "console_scripts": [
+            "qureed_server=qureed_project_server.server:main",  # Maps the 'qureed_server' command to 'server.py'
+        ],
     },
 )
