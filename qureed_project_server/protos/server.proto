@@ -158,7 +158,6 @@ message Device {
   repeated float location = 7;
 }
 
-
 message GetDevicesRequest {
 }
 
@@ -191,6 +190,7 @@ message OpenBoardResponse {
 
 message SaveBoardRequest {
   string board = 1;
+  repeated Device devices = 2;
 }
 
 message SaveBoardResponse {
