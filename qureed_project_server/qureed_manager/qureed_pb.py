@@ -18,10 +18,22 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
             )
             
         except Exception as e:
-            print("ERROR", e)
             return server_pb2.GetDevicesResponse(
                 status="failure",
                 message=f"Error in fetching the devices: {e}"
                 )
 
-        
+    def OpenBoard(self, request, context):
+        QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+        try:
+            QM.open_scheme(request.board)
+
+            return server_pb2.OpenBoardResponse(
+                status="success"
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.OpenBoardResponse(
+                status="failure",
+                message=f"Error when opening board {request.board} the devices: {e}"
+                )

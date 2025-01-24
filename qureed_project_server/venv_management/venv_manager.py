@@ -1,3 +1,5 @@
+from pathlib import Path
+import sys
 from virtualenvapi.manage import VirtualEnvironment
 
 from qureed_project_server.logic_modules import LogicModuleEnum, LogicModuleHandler
@@ -19,12 +21,39 @@ class VenvManager:
             LMH.register(LogicModuleEnum.VENV_MANAGER, self)
             self.initialized = True
 
-    def connect(self, path):
+    def connect(self, path:str) -> None:
+        """
+        Connects to the project "runtime"
+
+        Parameters:
+        -----------
+        - path: str
+            path to the venv inside of the project
+        Notes:
+        ------
+           This method also imports the project into the system path
+        """
         self.path = path
         self.venv = VirtualEnvironment(path)
+        # Add the 'custom' directory to sys.path
 
-    def install(self, package):
-        print("Installing")
+        custom_path = Path(self.path).parents[0] / "custom"
+        # Add the parent of 'custom' to sys.path
+        custom_base_path = Path(self.path).parents[0]
+        if str(custom_base_path) not in sys.path:
+            sys.path.insert(0, str(custom_base_path))
+            print(f"Added to sys.path: {custom_base_path}")
+        if not custom_path.exists():
+            print(f"Warning: 'custom' directory not found at {custom_path}.")
+        elif str(custom_path) not in sys.path:
+            sys.path.insert(0, str(custom_path))
+            print(f"'custom' directory added to sys.path: {custom_path}")
+
+
+    def install(self, package:str) -> None:
+        """
+        Installs the package into the activated environment.
+        """
         self.venv.install(package)
 
     def uninstall(self, package):

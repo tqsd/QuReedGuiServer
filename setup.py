@@ -15,6 +15,7 @@ setup(
     packages=find_packages(where="."),
     install_requires=[
         "grpcio",
+        "protobuf"
     ],
     entry_points={
     },

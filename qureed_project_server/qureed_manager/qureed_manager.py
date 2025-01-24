@@ -1,3 +1,5 @@
+import json
+import sys
 import importlib.util
 import inspect
 import traceback
@@ -20,6 +22,7 @@ class QuReedManager:
     def __init__(self):
         if not hasattr(self, "initialized"):
             LMH.register(LogicModuleEnum.QUREED_MANAGER, self)
+            self.opened_scheme = None
             self.initialized = True
 
     def get_devices(self):
@@ -121,3 +124,60 @@ class QuReedManager:
                 device_messages.append(device_message)
 
         return device_messages
+
+    def open_scheme(self, board):
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        project_root = Path(VM.path).parents[0]
+        scheme = project_root / board
+
+        print(scheme)
+
+        with open(scheme, "r") as f:
+            data = json.load(f)
+
+        
+
+        print("We have the data, is there an error")
+        BM.open_scheme(data)
+
+    def get_class(self, mc: str):
+        """
+        Gets the class based on the device_mc
+
+        Parameters:
+        - mc: str
+            A string describing the module and class path.
+            Example: "qureed.devices.variables.variable.Variable"
+
+        Returns:
+        - class: type
+            The requested class if found.
+
+        Raises:
+        - ModuleNotFoundError: If the module is not found.
+        - AttributeError: If the class is not found in the module.
+        """
+        try:
+            # Split the module path and class name
+            *module_path, class_name = mc.split(".")
+            module_name = ".".join(module_path)
+
+            # Import the module dynamically
+            module = importlib.import_module(module_name)
+
+            # Get the class from the module
+            cls = getattr(module, class_name)
+
+            return cls
+        except ModuleNotFoundError:
+            print(f"Module '{module_name}' not found.")
+            print(sys.path)
+            print(sys.executable)
+            raise
+        except AttributeError:
+            print(f"Class '{class_name}' not found in module '{module_name}'.")
+            raise
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            raise

@@ -21,11 +21,14 @@ def run():
         # freeze_response = venv_stub.Freeze(server_pb2.FreezeRequest())
         # print(f"Freeze Packages:\n{freeze_response.packages}")
 
-        devices_response = qm_stub.GetDevices(server_pb2.GetDevicesRequest())
-        print(devices_response)
+        #devices_response = qm_stub.GetDevices(server_pb2.GetDevicesRequest())
+        #print(devices_response)
         #server_terminate_response = server_stub.Terminate(server_pb2.TerminateRequest())
         #print(f"Server Terminate Response:\n{server_terminate_response}")
 
+        open_board_response = qm_stub.OpenBoard(server_pb2.OpenBoardRequest(
+            board="test.json"))
+        print(open_board_response)
 
 if __name__ == "__main__":
     run()

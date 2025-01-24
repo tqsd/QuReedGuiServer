@@ -3,6 +3,7 @@ from enum import StrEnum
 class LogicModuleEnum(StrEnum):
     VENV_MANAGER = "venv_manager"
     QUREED_MANAGER = "qureed_manager"
+    BOARD_MANAGER = "board_manager"
 
 class LogicModuleHandler:
     _instance = None
