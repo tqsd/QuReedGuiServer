@@ -156,6 +156,8 @@ message Device {
   string uuid = 5;
   DeviceProperties device_properties = 6;
   repeated float location = 7;
+  repeated string gui_tags = 8;
+  GetIconResponse icon = 9;
 }
 
 message GetDevicesRequest {

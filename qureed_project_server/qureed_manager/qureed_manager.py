@@ -7,7 +7,8 @@ import os
 from pathlib import Path
 from qureed_project_server.logic_modules import LogicModuleEnum,LogicModuleHandler
 from qureed_project_server import server_pb2
-from qureed.devices.generic_device import GenericDevice
+import pkgutil
+#from qureed.devices.generic_device import GenericDevice
 
 LMH = LogicModuleHandler()
 
@@ -86,6 +87,18 @@ class QuReedManager:
             print(e)
             traceback.print_exc()
 
+    def get_icon_location(self, icon):
+
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        
+        if "custom" in icon.split("/"):
+            return str(Path(VM.path).parents[0] / icon.lstrip("/"))
+        else:
+            loader = pkgutil.get_loader("qureed")
+            if loader and loader.is_package("qureed"):
+                return str(Path(loader.get_filename()).parent / "assets" /icon)
+            
+
     def create_device_message(self, device_class):
         class_name = device_class.__name__
         print(class_name)
@@ -95,11 +108,16 @@ class QuReedManager:
         if not isinstance(gui_name, str):
             gui_name = class_name
 
+        gui_tags = getattr(device_class, "gui_tags", None)
+        gui_icon = self.get_icon_location(getattr(device_class, "gui_icon", None))
+        print("GUI ICON")
+        print(gui_icon)
         
         ports = []
-        if hasattr(class_name, "ports"):
-            if isinstance(attr.ports, dict):
-                for port_name, port in attr.ports.items():
+        if hasattr(device_class, "ports"):
+            print("HAS PORTS")
+            if isinstance(device_class.ports, dict):
+                for port_name, port in device_class.ports.items():
                     ports.append(server_pb2.Port(
                         label=port.label,
                         direction=port.direction,
@@ -111,17 +129,23 @@ class QuReedManager:
             gui_name=gui_name,
             module_class=module_class,
             ports=ports,
+            gui_tags=gui_tags,
+            icon=server_pb2.GetIconResponse(
+                abs_path=gui_icon
+                )
             )
+        print("^__________")
+        print(ports)
+        print(device_msg)
 
         return device_msg
-        
-        
-
 
     def create_device_message_from_module(self, module):
+        print("\n\nGENERATING DEVICE MESSAGE")
         device_classes = []
         device_messages = []
 
+        GenericDevice = self.get_class("qureed.devices.generic_device.GenericDevice")
         for attr_name in dir(module):
             attr = getattr(module, attr_name)
 
@@ -130,6 +154,10 @@ class QuReedManager:
 
                 class_name = attr.__name__
                 gui_name = getattr(attr, "gui_name", None)
+                gui_icon = getattr(attr, "gui_icon", None)
+                print("GUI ICON")
+                print(gui_icon)
+                gui_tags = getattr(attr, "gui_tags", None)
                 module_name = module.__name__
 
                 # Handle ports if defined
@@ -150,7 +178,8 @@ class QuReedManager:
                     class_name=class_name,
                     gui_name=gui_name,
                     module_class=f"{module_name}.{class_name}",
-                    ports=ports
+                    ports=ports,
+                    gui_tags=gui_tags,
                 )
 
                 device_messages.append(device_message)
