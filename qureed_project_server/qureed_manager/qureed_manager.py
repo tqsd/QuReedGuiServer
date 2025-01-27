@@ -134,14 +134,10 @@ class QuReedManager:
                 abs_path=gui_icon
                 )
             )
-        print("^__________")
-        print(ports)
-        print(device_msg)
 
         return device_msg
 
     def create_device_message_from_module(self, module):
-        print("\n\nGENERATING DEVICE MESSAGE")
         device_classes = []
         device_messages = []
 
@@ -155,8 +151,6 @@ class QuReedManager:
                 class_name = attr.__name__
                 gui_name = getattr(attr, "gui_name", None)
                 gui_icon = getattr(attr, "gui_icon", None)
-                print("GUI ICON")
-                print(gui_icon)
                 gui_tags = getattr(attr, "gui_tags", None)
                 module_name = module.__name__
 
