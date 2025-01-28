@@ -27,6 +27,7 @@ class QuReedManager:
             self.initialized = True
 
     def get_devices(self):
+        print("GETTING ALL OF THE DEVICES\n\n\n")
         try:
             VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
             spec = importlib.util.find_spec("qureed")
@@ -48,13 +49,15 @@ class QuReedManager:
             device_list = []
 
             
+            print("Getting the list of QuReed Devices")
             # Getting builtin QuReed Devices
             for root, _, files in os.walk(builtin_devices_path):
                 for file in files:
                     if file.endswith(".py") and not file.startswith("__"):
                         module_path = Path(root) / file
-                        module_name = str(module_path.relative_to(qureed_path)).replace(os.sep, ".").replace(".py", "")
+                        module_name = "qureed."+str(module_path.relative_to(qureed_path)).replace(os.sep, ".").replace(".py", "")
 
+                        print("MODULE NAME:", module_name)
                         # Dynamically import the module
                         spec = importlib.util.spec_from_file_location(module_name, module_path)
                         module = importlib.util.module_from_spec(spec)
@@ -62,9 +65,11 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
+                        print(module)
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
 
+            print("Getting the list of the Custom Devices")
             # Getting Custom Devices
             for root, _, files in os.walk(custom_devices_path):
                 for file in files:
@@ -77,6 +82,7 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
+                        print(module)
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
                         
@@ -88,11 +94,13 @@ class QuReedManager:
             traceback.print_exc()
 
     def get_icon_location(self, icon):
+        if not icon:
+            return ""
+        print(icon)
 
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         
         if "custom" in icon.split("/"):
-            print("GETTING CUSTOM ICON LOCATION")
             print(str(Path(VM.path).parents[0] / icon.lstrip("/")))
             return str(Path(VM.path).parents[0] / icon.lstrip("/"))
         else:
@@ -111,7 +119,6 @@ class QuReedManager:
 
         gui_tags = getattr(device_class, "gui_tags", None)
         gui_icon = self.get_icon_location(getattr(device_class, "gui_icon", None))
-        print(gui_icon)
         
         ports = []
         if hasattr(device_class, "ports"):
@@ -170,12 +177,14 @@ class QuReedManager:
         raise Exception("No device found")
 
     def create_device_message_from_module(self, module):
+        print("Creatind device message from: ", module)
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         project_root = Path(VM.path).parents[0]
         device_classes = []
         device_messages = []
 
         GenericDevice = self.get_class("qureed.devices.generic_device.GenericDevice")
+        GenericFiber = self.get_class("qureed.devices.fiber.generic_fiber.GenericFiber")
         for attr_name in dir(module):
             attr = getattr(module, attr_name)
 
@@ -183,18 +192,23 @@ class QuReedManager:
                 device_classes.append(attr)
 
                 class_name = attr.__name__
+                print(class_name)
                 gui_name = getattr(attr, "gui_name", None)
-                gui_icon = self.get_icon_location(getattr(attr, "gui_icon", None))
+                print(getattr(attr, "gui_icon", None))
+                try:
+                    gui_icon = self.get_icon_location(getattr(attr, "gui_icon", None))
+                except Exception as e:
+                    continue
                 gui_tags = getattr(attr, "gui_tags", None)
                 module_path = Path(module.__file__)
-                print(module_path)
 
-                # Compute the relative path from the root package directory
-                relative_path = module_path.relative_to(project_root).with_suffix("")
-                print(relative_path)
-
-                module_name = ".".join(relative_path.parts)
-                print("MODULE NAME")
+                try:
+                    # Try to calculate the relative path
+                    relative_path = module_path.relative_to(project_root).with_suffix("")
+                    module_name = ".".join(relative_path.parts)
+                except ValueError:
+                    # Fallback to using the absolute path if outside project_root
+                    module_name = module.__name__
                 print(module_name)
 
                 # Handle ports if defined
