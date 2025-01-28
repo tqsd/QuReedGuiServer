@@ -39,3 +39,36 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 status="failure",
                 message=f"Error when opening board {request.board} the devices: {e}"
                 )
+
+    def GetDevice(self, request, context):
+        QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+        try:
+             device = QM.get_device(request)
+             return server_pb2.GetDeviceResponse(
+                 device=device,
+                 )
+        except Exception as e:
+            traceback.print_exc()
+            
+            return server_pb2.GetDeviceResponse(
+                 status="failure",
+                 message=f"Error while getting device: {e}"
+                 )
+
+    def AddDevice(self, request, context):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        try:
+            device_uuid = BM.add_device(request.device)
+            return server_pb2.AddDeviceResponse(
+                status="success",
+                device_uuid=str(device_uuid)
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.AddDeviceResponse(
+                status="failure",
+                device_uuid=f"Failed to add a device due to: {e}"
+                )
+            
+        
+         

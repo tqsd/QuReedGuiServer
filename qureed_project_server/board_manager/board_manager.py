@@ -77,3 +77,11 @@ class BoardManager:
         else:
             raise Exception("Device Not found on the current board")
         
+
+    def add_device(self, device_msg):
+        QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+        device_class = QM.get_class(device_msg.module_class)
+        device = device_class()
+        uuid = device.ref.uuid
+        self.devices.append(device)
+        return uuid

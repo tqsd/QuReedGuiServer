@@ -172,11 +172,13 @@ message GetDevicesResponse {
 message GetDeviceRequest {
   string module_class = 1;
   string class_name = 2;
+  string module_path = 3;
 }
 
 message GetDeviceResponse {
   Device device = 1;
   string message = 2;
+  string status = 3;
 }
 
 message OpenBoardRequest {
@@ -200,7 +202,7 @@ message SaveBoardResponse {
 }
 
 message AddDeviceRequest {
-  google.protobuf.Struct device = 1;
+  Device device = 1;
 }
 
 message AddDeviceResponse {
