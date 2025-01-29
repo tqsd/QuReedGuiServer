@@ -81,9 +81,10 @@ class BoardManager:
     def add_device(self, device_msg):
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
         device_class = QM.get_class(device_msg.module_class)
-        device = device_class()
+        device = device_class(uid=device_msg.uuid)
         uuid = device.ref.uuid
         self.devices.append(device)
+        print(f"Created a new device with UUID: {uuid}")
         return uuid
 
     def connect_devices(self, connect_request:server_pb2.ConnectDevicesRequest):
@@ -94,7 +95,9 @@ class BoardManager:
         dev2=self.get_device(connect_request.device_uuid_2)
 
         if dev1 == dev2:
-            raise Exception("Cannot connect to self")
+            print(connect_request.device_uuid_1)
+            print(connect_request.device_uuid_2)
+            raise Exception("Cannot connect to self!")
         
         sig_cls_1 = dev1.ports[connect_request.device_port_1].signal_type
         sig_cls_2 = dev2.ports[connect_request.device_port_2].signal_type
@@ -111,3 +114,24 @@ class BoardManager:
         dev2.register_signal(signal=sig, port_label=connect_request.device_port_2)
         self.connections.append(sig)
 
+    def disconnect_devices(self, disconnect_request:server_pb2.DisconnectDevicesRequest):
+        
+        dev1=self.get_device(disconnect_request.device_uuid_1)
+        dev2=self.get_device(disconnect_request.device_uuid_2)
+
+        if dev1 == dev2:
+            raise Exception("Cannot disconnect from self!")
+
+        sig1 = dev1.ports[disconnect_request.device_port_1].signal
+        sig2 = dev2.ports[disconnect_request.device_port_2].signal
+
+        print(sig1, sig2)
+
+        if not sig1 == sig2:
+            raise Exception("Multiple signals per port not yet supported!")
+
+        for p in sig1.ports:
+            p.signal = None
+        self.connections.remove(sig1)
+        
+        

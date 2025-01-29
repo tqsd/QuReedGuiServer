@@ -83,4 +83,18 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 status="failure",
                 message=f"Failed to connect the devices due to {e}"
                 )
-         
+
+    def DisconnectDevices(self, request, context):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        try:
+            BM.disconnect_devices(request)
+            return server_pb2.DisconnectDevicesResponse(
+                status="success"
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.DisconnectDevicesResponse(
+                status="failure",
+                message=f"Failed to disconnect the devices due to {e}"
+                )
+        
