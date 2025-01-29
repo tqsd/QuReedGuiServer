@@ -35,7 +35,6 @@ class BoardManager:
 
             self.devices.append(device)
             device_msg = QM.create_device_message(device_class)
-            print(device_msg)
             device_msg.uuid = device_descriptor["uuid"]
             if "properties" in device_descriptor:
                 # Create a Struct object and populate it
@@ -60,6 +59,7 @@ class BoardManager:
                 signal=signal,
                 port_label=signal_descriptor["conn"][1]["port"]
                 )
+            self.connections.append(signal)
             connection_msg = server_pb2.Connection(
                 device_one_uuid=device1.ref.uuid,
                 device_two_uuid=device2.ref.uuid,
@@ -69,14 +69,14 @@ class BoardManager:
                 )
             connections_msg.append(connection_msg)
             
-        return devices_msg, connections_msg 
+        return devices_msg, connections_msg
+    
     def get_device(self, uuid:str) -> object:
         filtered_devices = [d for d in self.devices if d.ref.uuid==uuid]
         if len(filtered_devices) == 1:
             return filtered_devices[0]
         else:
             raise Exception("Device Not found on the current board")
-        
 
     def add_device(self, device_msg):
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
@@ -85,3 +85,29 @@ class BoardManager:
         uuid = device.ref.uuid
         self.devices.append(device)
         return uuid
+
+    def connect_devices(self, connect_request:server_pb2.ConnectDevicesRequest):
+        """
+        Connects the two devices on the board.
+        """
+        dev1=self.get_device(connect_request.device_uuid_1)
+        dev2=self.get_device(connect_request.device_uuid_2)
+
+        if dev1 == dev2:
+            raise Exception("Cannot connect to self")
+        
+        sig_cls_1 = dev1.ports[connect_request.device_port_1].signal_type
+        sig_cls_2 = dev2.ports[connect_request.device_port_2].signal_type
+        sig_cls = None
+        if issubclass(sig_cls_1, sig_cls_2):
+            sig_cls = sig_cls_1
+        elif issubclass(sig_cls_2, sig_cls_1):
+            sig_cls = sig_cls_2
+        else:
+            raise Exception("Signals Hierarchies Diverge")
+
+        sig=sig_cls()
+        dev1.register_signal(signal=sig, port_label=connect_request.device_port_1)
+        dev2.register_signal(signal=sig, port_label=connect_request.device_port_2)
+        self.connections.append(sig)
+

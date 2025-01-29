@@ -67,8 +67,20 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
             traceback.print_exc()
             return server_pb2.AddDeviceResponse(
                 status="failure",
-                device_uuid=f"Failed to add a device due to: {e}"
+                message=f"Failed to add a device due to: {e}"
                 )
             
-        
+    def ConnectDevices(self, request, context):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        try:
+            BM.connect_devices(request)
+            return server_pb2.ConnectDevicesResponse(
+                status="success"
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.ConnectDevicesResponse(
+                status="failure",
+                message=f"Failed to connect the devices due to {e}"
+                )
          
