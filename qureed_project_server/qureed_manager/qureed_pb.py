@@ -83,6 +83,22 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 status="failure",
                 message=f"Failed to add a device due to: {e}"
                 )
+
+    def RemoveDevice(self, request, context):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        try:
+            BM.remove_device(request.device_uuid)
+            return server_pb2.RemoveDeviceResponse(
+                status="success"
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.RemoveDeviceResponse(
+                status="failure",
+                message=f"Device removal failed due to error: {e}",
+                )
+
+
             
     def ConnectDevices(self, request, context):
         BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
@@ -112,3 +128,5 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 message=f"Failed to disconnect the devices due to {e}"
                 )
         
+
+    

@@ -75,7 +75,6 @@ class BoardManager:
         return devices_msg, connections_msg
 
     def save_scheme(self,  request:server_pb2.SaveBoardRequest):
-        print("SAVING SCHEME")
         json_file_descriptor = {
             "devices":[],
             "connections":[]
@@ -203,5 +202,9 @@ class BoardManager:
         for p in sig1.ports:
             p.signal = None
         self.connections.remove(sig1)
+
+    def remove_device(self, device_uuid):
+        dev = self.get_device(device_uuid)
+        self.devices.remove(dev)
         
         
