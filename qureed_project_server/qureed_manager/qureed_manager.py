@@ -27,12 +27,10 @@ class QuReedManager:
             self.initialized = True
 
     def get_devices(self):
-        print("GETTING ALL OF THE DEVICES\n\n\n")
         try:
             VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
             spec = importlib.util.find_spec("qureed")
             if not spec or not spec.submodule_search_locations:
-                print("Could not locate 'qureed' package")
                 return []
 
             qureed_path = Path(next(iter(spec.submodule_search_locations)))
@@ -49,7 +47,6 @@ class QuReedManager:
             device_list = []
 
             
-            print("Getting the list of QuReed Devices")
             # Getting builtin QuReed Devices
             for root, _, files in os.walk(builtin_devices_path):
                 for file in files:
@@ -57,7 +54,6 @@ class QuReedManager:
                         module_path = Path(root) / file
                         module_name = "qureed."+str(module_path.relative_to(qureed_path)).replace(os.sep, ".").replace(".py", "")
 
-                        print("MODULE NAME:", module_name)
                         # Dynamically import the module
                         spec = importlib.util.spec_from_file_location(module_name, module_path)
                         module = importlib.util.module_from_spec(spec)
@@ -65,11 +61,9 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
-                        print(module)
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
 
-            print("Getting the list of the Custom Devices")
             # Getting Custom Devices
             for root, _, files in os.walk(custom_devices_path):
                 for file in files:
@@ -82,7 +76,6 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
-                        print(module)
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
                         
@@ -96,12 +89,11 @@ class QuReedManager:
     def get_icon_location(self, icon):
         if not icon:
             return ""
-        print(icon)
 
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         
         if "custom" in icon.split("/"):
-            print(str(Path(VM.path).parents[0] / icon.lstrip("/")))
+            #print(str(Path(VM.path).parents[0] / icon.lstrip("/")))
             return str(Path(VM.path).parents[0] / icon.lstrip("/"))
         else:
             loader = pkgutil.get_loader("qureed")
@@ -110,7 +102,6 @@ class QuReedManager:
             
 
     def create_device_message(self, device_class):
-        print("CREATING DEVICE MESSAGE")
         class_name = device_class.__name__
         module_class = f"{device_class.__module__}.{device_class.__qualname__}"
         gui_name = getattr(device_class, "gui_name", None)
@@ -122,7 +113,6 @@ class QuReedManager:
         
         ports = []
         if hasattr(device_class, "ports"):
-            print("HAS PORTS")
             if isinstance(device_class.ports, dict):
                 for port_name, port in device_class.ports.items():
                     ports.append(server_pb2.Port(
@@ -149,7 +139,6 @@ class QuReedManager:
         Gets the device, based on the module class representation or based on
         the module path
         """
-        print("Getting device", device_request.module_path)
 
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
 
@@ -159,7 +148,6 @@ class QuReedManager:
                 pass
 
             elif device_request.module_path:
-                print('Module path')
                 module_path = Path(device_request.module_path)
                 module_name = str(module_path.relative_to(custom_devices_path)).replace(os.sep, ".").replace(".py", "")
 
@@ -167,7 +155,6 @@ class QuReedManager:
                 spec = importlib.util.spec_from_file_location(module_name, module_path)
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
-                print("SHOULD CREATE MESSAGE OUT OF THE MODULE")
                 device_message = self.create_device_message_from_module(module)
                 return device_message[0]
         except Exception as e:
@@ -177,7 +164,6 @@ class QuReedManager:
         raise Exception("No device found")
 
     def create_device_message_from_module(self, module):
-        print("Creatind device message from: ", module)
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         project_root = Path(VM.path).parents[0]
         device_classes = []
@@ -192,9 +178,7 @@ class QuReedManager:
                 device_classes.append(attr)
 
                 class_name = attr.__name__
-                print(class_name)
                 gui_name = getattr(attr, "gui_name", None)
-                print(getattr(attr, "gui_icon", None))
                 try:
                     gui_icon = self.get_icon_location(getattr(attr, "gui_icon", None))
                 except Exception as e:
@@ -209,7 +193,6 @@ class QuReedManager:
                 except ValueError:
                     # Fallback to using the absolute path if outside project_root
                     module_name = module.__name__
-                print(module_name)
 
                 # Handle ports if defined
                 ports = []
@@ -250,7 +233,7 @@ class QuReedManager:
         with open(scheme, "r") as f:
             data = json.load(f)
 
-        return BM.open_scheme(data)
+        return BM.open_scheme(scheme, data)
 
     def get_class(self, mc: str):
         """

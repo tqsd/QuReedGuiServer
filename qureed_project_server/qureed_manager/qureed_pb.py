@@ -40,6 +40,20 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 message=f"Error when opening board {request.board} the devices: {e}"
                 )
 
+    def SaveBoard(self, request, context):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        try:
+            BM.save_scheme(request)
+            return server_pb2.SaveBoardResponse(
+                status="success",
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.SaveBoardResponse(
+                status="failure",
+                message=f"Error while saving the board {request.board}: {e}"
+                )
+
     def GetDevice(self, request, context):
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
         try:
