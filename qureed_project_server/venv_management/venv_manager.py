@@ -49,6 +49,10 @@ class VenvManager:
             sys.path.insert(0, str(custom_path))
             print(f"'custom' directory added to sys.path: {custom_path}")
 
+        print(f"Loading 'custom' as a package")
+        QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+        QM.load_custom_as_package()
+
 
     def install(self, package:str) -> None:
         """

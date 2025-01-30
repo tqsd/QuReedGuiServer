@@ -23,6 +23,52 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 message=f"Error in fetching the devices: {e}"
                 )
 
+    def GetIcons(self, request, context):
+        try:
+            QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+            icons = QM.get_all_icons()
+            return server_pb2.GetIconsResponse(
+                status="success",
+                icons_list=icons
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.GetIconsResponse(
+                status="failure",
+                message=f"Error during icon fetch: {e}"
+                )
+
+    def GetSignals(self, request, context):
+        try:
+            QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+            signals = list(QM.get_all_signals())
+            return server_pb2.GetSignalsResponse(
+                status="success",
+                signals=signals
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.GetSignalsResponse(
+                status="failure",
+                message=f"Error during signal fetch: {e}"
+                )
+
+    def GenerateDevices(self, request, context):
+        try:
+            print("Generate Device")
+            QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+            QM.generate_new_device(request.device)
+            return server_pb2.GenerateDeviceResponse(
+                status=f"success",
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.GenerateDeviceResponse(
+                status=f"failure",
+                message=f"Error during device generation: {e}"
+                )
+        
+
     def OpenBoard(self, request, context):
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
         try:
@@ -98,8 +144,6 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 message=f"Device removal failed due to error: {e}",
                 )
 
-
-            
     def ConnectDevices(self, request, context):
         BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
         try:

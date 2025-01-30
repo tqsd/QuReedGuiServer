@@ -375,6 +375,11 @@ class QuReedManagementStub(object):
                 request_serializer=server__pb2.GetDeviceRequest.SerializeToString,
                 response_deserializer=server__pb2.GetDeviceResponse.FromString,
                 _registered_method=True)
+        self.GetSignals = channel.unary_unary(
+                '/qureed_project_server.QuReedManagement/GetSignals',
+                request_serializer=server__pb2.GetSignalsRequest.SerializeToString,
+                response_deserializer=server__pb2.GetSignalsResponse.FromString,
+                _registered_method=True)
         self.OpenBoard = channel.unary_unary(
                 '/qureed_project_server.QuReedManagement/OpenBoard',
                 request_serializer=server__pb2.OpenBoardRequest.SerializeToString,
@@ -405,6 +410,11 @@ class QuReedManagementStub(object):
                 request_serializer=server__pb2.DisconnectDevicesRequest.SerializeToString,
                 response_deserializer=server__pb2.DisconnectDevicesResponse.FromString,
                 _registered_method=True)
+        self.GenerateDevices = channel.unary_unary(
+                '/qureed_project_server.QuReedManagement/GenerateDevices',
+                request_serializer=server__pb2.GenerateDeviceRequest.SerializeToString,
+                response_deserializer=server__pb2.GenerateDeviceResponse.FromString,
+                _registered_method=True)
 
 
 class QuReedManagementServicer(object):
@@ -433,6 +443,13 @@ class QuReedManagementServicer(object):
 
     def GetDevice(self, request, context):
         """Get a single Device (built-in or custom)
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSignals(self, request, context):
+        """Get all signals
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -480,6 +497,13 @@ class QuReedManagementServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GenerateDevices(self, request, context):
+        """Generate new devices
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_QuReedManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -502,6 +526,11 @@ def add_QuReedManagementServicer_to_server(servicer, server):
                     servicer.GetDevice,
                     request_deserializer=server__pb2.GetDeviceRequest.FromString,
                     response_serializer=server__pb2.GetDeviceResponse.SerializeToString,
+            ),
+            'GetSignals': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSignals,
+                    request_deserializer=server__pb2.GetSignalsRequest.FromString,
+                    response_serializer=server__pb2.GetSignalsResponse.SerializeToString,
             ),
             'OpenBoard': grpc.unary_unary_rpc_method_handler(
                     servicer.OpenBoard,
@@ -532,6 +561,11 @@ def add_QuReedManagementServicer_to_server(servicer, server):
                     servicer.DisconnectDevices,
                     request_deserializer=server__pb2.DisconnectDevicesRequest.FromString,
                     response_serializer=server__pb2.DisconnectDevicesResponse.SerializeToString,
+            ),
+            'GenerateDevices': grpc.unary_unary_rpc_method_handler(
+                    servicer.GenerateDevices,
+                    request_deserializer=server__pb2.GenerateDeviceRequest.FromString,
+                    response_serializer=server__pb2.GenerateDeviceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -642,6 +676,33 @@ class QuReedManagement(object):
             '/qureed_project_server.QuReedManagement/GetDevice',
             server__pb2.GetDeviceRequest.SerializeToString,
             server__pb2.GetDeviceResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSignals(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedManagement/GetSignals',
+            server__pb2.GetSignalsRequest.SerializeToString,
+            server__pb2.GetSignalsResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -804,6 +865,33 @@ class QuReedManagement(object):
             '/qureed_project_server.QuReedManagement/DisconnectDevices',
             server__pb2.DisconnectDevicesRequest.SerializeToString,
             server__pb2.DisconnectDevicesResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GenerateDevices(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedManagement/GenerateDevices',
+            server__pb2.GenerateDeviceRequest.SerializeToString,
+            server__pb2.GenerateDeviceResponse.FromString,
             options,
             channel_credentials,
             insecure,

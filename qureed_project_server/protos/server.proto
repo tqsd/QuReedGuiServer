@@ -37,6 +37,9 @@ service QuReedManagement {
   // Get a single Device (built-in or custom)
   rpc GetDevice (GetDeviceRequest) returns (GetDeviceResponse);
 
+  // Get all signals
+  rpc GetSignals (GetSignalsRequest) returns (GetSignalsResponse);
+
   // Request Opening a board
   rpc OpenBoard (OpenBoardRequest) returns (OpenBoardResponse);
 
@@ -54,6 +57,9 @@ service QuReedManagement {
 
   // Disconnects the devices
   rpc DisconnectDevices (DisconnectDevicesRequest) returns (DisconnectDevicesResponse);
+
+  // Generate new devices
+  rpc GenerateDevices (GenerateDeviceRequest) returns (GenerateDeviceResponse);
 
 }
 
@@ -128,6 +134,21 @@ message GetIconsRequest {
 message GetIconsResponse {
   string status = 1;
   google.protobuf.Struct icons = 2;
+  repeated GetIconResponse icons_list = 3;
+  string message = 4;
+}
+
+message Signal {
+  string module_class = 1;
+  string name = 2;
+}
+message GetSignalsRequest {
+}
+
+message GetSignalsResponse {
+  string status = 1;
+  string message = 2;
+  repeated Signal signals = 3;
 }
 
 message DeviceProperties {
@@ -158,6 +179,14 @@ message Device {
   repeated float location = 7;
   repeated string gui_tags = 8;
   GetIconResponse icon = 9;
+}
+
+message GenerateDeviceRequest {
+  Device device = 1;
+}
+message GenerateDeviceResponse {
+  string status=1;
+  string message=2;
 }
 
 message GetDevicesRequest {

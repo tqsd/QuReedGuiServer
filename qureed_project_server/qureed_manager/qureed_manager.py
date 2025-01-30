@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 import importlib.util
 import inspect
@@ -7,7 +8,9 @@ import os
 from pathlib import Path
 from qureed_project_server.logic_modules import LogicModuleEnum,LogicModuleHandler
 from qureed_project_server import server_pb2
+from google.protobuf.json_format import MessageToDict
 import pkgutil
+from jinja2 import Environment, FileSystemLoader
 #from qureed.devices.generic_device import GenericDevice
 
 LMH = LogicModuleHandler()
@@ -64,6 +67,11 @@ class QuReedManager:
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
 
+                
+            custom_module = Path(VM.path).parents[0] / "custom"
+            spec = importlib.util.spec_from_file_location("custom", custom_module)
+            custom = importlib.util.module_from_spec(spec)
+
             # Getting Custom Devices
             for root, _, files in os.walk(custom_devices_path):
                 for file in files:
@@ -83,8 +91,145 @@ class QuReedManager:
             return device_list, message
 
         except Exception as e:
-            print(e)
             traceback.print_exc()
+
+    def get_all_icons(self):
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        icons = []
+        # Get built in icons
+        loader = pkgutil.get_loader("qureed")
+        try:
+            qureed_icons = importlib.import_module("qureed.assets.icon_list")
+        except ModuleNotFoundError:
+            print("Failed to import qureed.assets.icon_list")
+        if loader and loader.is_package("qureed") and qureed_icons:
+            for icon_name, icon_file in vars(qureed_icons).items():
+                if isinstance(icon_file, str) and icon_file.endswith(".png"):  # Filter only image files
+                    icon_abs_path = self.get_icon_location(icon_file)
+                    icons.append(
+                        server_pb2.GetIconResponse(
+                            name=icon_name,  # Name like "BEAM_SPLITTER"
+                            abs_path=icon_abs_path  # Absolute path of the icon
+                        )
+                    )
+        # Get Custom Icons
+        
+        custom_icons_path = Path(VM.path).parents[0] / "custom" / "icons"
+        custom_base_path = Path(VM.path).parents[0]
+        if custom_icons_path.exists() and custom_icons_path.is_dir():
+            for icon_file in custom_icons_path.glob("*.png"):  # Only .png files
+                icons.append(
+                    server_pb2.GetIconResponse(
+                        name=str(icon_file.relative_to(custom_base_path)),
+                        abs_path=str(icon_file.resolve())  # Get absolute path
+                    )
+                )
+
+
+        return icons
+
+    def get_all_signals(self):
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        signals = set()
+
+        spec = importlib.util.find_spec("qureed")
+        if not spec or not spec.submodule_search_locations:
+            return []
+
+        qureed_path = Path(next(iter(spec.submodule_search_locations)))
+        GenericSignal = self.get_class("qureed.signals.generic_signal.GenericSignal")
+        builtin_signals_path = qureed_path / "signals"
+        custom_signals_path = Path(VM.path).parents[0] / "custom" / "signals"
+
+        # Getting builtin QuReed Devices
+        for root, _, files in os.walk(builtin_signals_path):
+            for file in files:
+                if file.endswith(".py") and not file.startswith("__"):
+                    module_path = Path(root) / file
+                    module_name = "qureed."+str(module_path.relative_to(qureed_path)).replace(os.sep, ".").replace(".py", "")
+
+                    # Dynamically import the module
+                    spec = importlib.util.spec_from_file_location(module_name, module_path)
+                    module = importlib.util.module_from_spec(spec)
+                    try:
+                        spec.loader.exec_module(module)
+                    except Exception as e:
+                        continue
+                    
+                    for attr_name in dir(module):
+                        attr = getattr(module, attr_name)
+
+                        if inspect.isclass(attr) and issubclass(attr, GenericSignal) or attr is GenericSignal:
+                            if attr not in signals:
+                                signals.add(attr)
+        
+        # Getting Custom Devices
+        custom_path = Path(VM.path).parents[0]
+        for root, _, files in os.walk(custom_signals_path):
+            for file in files:
+                if file.endswith(".py") and not file.startswith("__"):
+                    module_path = Path(root) / file
+                    module_name = str(module_path.relative_to(custom_path)).replace(os.sep, ".").replace(".py", "")
+                    spec = importlib.util.spec_from_file_location(module_name, module_path)
+                    module = importlib.util.module_from_spec(spec)
+                    try:
+                        spec.loader.exec_module(module)
+                    except Exception as e:
+                        continue
+                    for attr_name in dir(module):
+                        attr = getattr(module, attr_name)
+                        if inspect.isclass(attr) and issubclass(attr, GenericSignal) or attr is GenericSignal:
+                            if attr not in signals:
+                                signals.add(attr)
+
+        signals_msg = []
+        
+        for s in signals:
+            signals_msg.append(server_pb2.Signal(
+                module_class = f"{s.__module__}.{s.__qualname__}",
+                name=s.__qualname__
+            ))
+        return signals_msg
+
+    def generate_new_device(self, device:server_pb2.Device):
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        template_module = importlib.import_module("qureed.templates")
+        template_dir = os.path.dirname(os.path.abspath(template_module.__file__))
+        template_path = str(Path(template_dir))
+        file_name = re.sub(r'(?<!^)(?=[A-Z])', '_', device.gui_name).lower().replace(" ", "")
+        file_name += ".py"
+        class_name = device.gui_name.title().replace(" ", "")
+        
+        env=Environment(loader=FileSystemLoader(template_path))
+        template=env.get_template("device_template.jinja")
+        input_ports={
+            port.label:port.signal_type for port in
+            device.ports if port.direction == "input"
+            }
+        output_ports={
+            port.label:port.signal_type for port in
+            device.ports if port.direction == "output"
+            }
+        properties=MessageToDict(device.device_properties.properties)
+        gui_icon=device.icon.name
+        if "custom/" in gui_icon:
+            gui_icon = f'"{gui_icon}"'
+        rendered_device = template.render(
+            name=device.gui_name,
+            class_name=class_name,
+            tags=list(device.gui_tags),
+            input_ports=input_ports,
+            output_ports=output_ports,
+            gui_icon=device.icon.name,
+            properties=properties,
+            custom=True
+            )
+
+        file_location = Path(VM.path).parents[0] / "custom" / "devices" / file_name
+        if file_location.exists():
+            raise Exception("Device with this name already exists")
+        with open(file_location, "w") as f:
+            f.write(rendered_device)
 
     def get_icon_location(self, icon):
         if not icon:
@@ -93,7 +238,6 @@ class QuReedManager:
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         
         if "custom" in icon.split("/"):
-            #print(str(Path(VM.path).parents[0] / icon.lstrip("/")))
             return str(Path(VM.path).parents[0] / icon.lstrip("/"))
         else:
             loader = pkgutil.get_loader("qureed")
@@ -134,6 +278,45 @@ class QuReedManager:
 
         return device_msg
 
+    def load_custom_as_package(self):
+        """
+        Load Custom as a package, so that custom modules
+        can be handled easily
+        """
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        custom_path = Path(VM.path).parents[0] / "custom"
+
+        # Ensure 'custom'is in sys.path
+        if str(custom_path.parent) not in sys.path:
+            sys.path.insert(0, str(custom_path.parent))
+
+        spec = importlib.util.find_spec("custom")
+        if spec is None:
+            raise ImportError("Could not find 'custom' package!")
+
+        custom = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(custom)
+
+        def import_submodules(package_name):
+            package=importlib.import_module(package_name)
+            if hasattr(package, "__path__"):
+                for _, submodule_name, is_pkg in pkgutil.walk_packages(
+                        package.__path__, package.__name__ + "."):
+                    try:
+                        submodule = importlib.import_module(submodule_name)
+                        parent_name = ".".join(submodule_name.split(".")[:-1])
+                        parent_module = importlib.import_module(parent_name)
+                        setattr(parent_module, submodule_name.split(".")[-1], submodule) 
+
+                        if is_pkg:
+                            import_submodules(submodule_name)
+                    except ModuleNotFoundError:
+                        print(f"Warning: '{submodule_name}' could not be loaded.")
+                    
+        import_submodules("custom.signals")
+        import_submodules("custom.devices")
+
+ 
     def get_device(self, device_request:server_pb2.GetDeviceRequest):
         """
         Gets the device, based on the module class representation or based on
@@ -159,8 +342,6 @@ class QuReedManager:
                 return device_message[0]
         except Exception as e:
             traceback.print_exc()
-
-            
         raise Exception("No device found")
 
     def create_device_message_from_module(self, module):
