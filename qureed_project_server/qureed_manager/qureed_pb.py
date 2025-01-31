@@ -155,7 +155,7 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
             traceback.print_exc()
             return server_pb2.ConnectDevicesResponse(
                 status="failure",
-                message=f"Failed to connect the devices due to {e}"
+                message=f"Failed to connect the devices due to: {e}"
                 )
 
     def DisconnectDevices(self, request, context):
@@ -169,8 +169,20 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
             traceback.print_exc()
             return server_pb2.DisconnectDevicesResponse(
                 status="failure",
-                message=f"Failed to disconnect the devices due to {e}"
+                message=f"Failed to disconnect the devices due to: {e}"
                 )
-        
 
-    
+    def UpdateDeviceProperties(self, request, context):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
+        try:
+            BM.update_device_properties(request.device)
+            return server_pb2.UpdateDevicePropertiesResponse(
+                status="success"
+                )
+        except Exception as e:
+            traceback.print_exc()
+            return server_pb2.UpdateDevicePropertiesResponse(
+                status="failure",
+                message=f"Failed to update the property due to: {e}"
+                )
+            

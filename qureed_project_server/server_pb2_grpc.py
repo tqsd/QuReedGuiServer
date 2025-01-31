@@ -415,6 +415,11 @@ class QuReedManagementStub(object):
                 request_serializer=server__pb2.GenerateDeviceRequest.SerializeToString,
                 response_deserializer=server__pb2.GenerateDeviceResponse.FromString,
                 _registered_method=True)
+        self.UpdateDeviceProperties = channel.unary_unary(
+                '/qureed_project_server.QuReedManagement/UpdateDeviceProperties',
+                request_serializer=server__pb2.UpdateDevicePropertiesRequest.SerializeToString,
+                response_deserializer=server__pb2.UpdateDevicePropertiesResponse.FromString,
+                _registered_method=True)
 
 
 class QuReedManagementServicer(object):
@@ -504,6 +509,13 @@ class QuReedManagementServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdateDeviceProperties(self, request, context):
+        """Update properties of existing device instance
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_QuReedManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -566,6 +578,11 @@ def add_QuReedManagementServicer_to_server(servicer, server):
                     servicer.GenerateDevices,
                     request_deserializer=server__pb2.GenerateDeviceRequest.FromString,
                     response_serializer=server__pb2.GenerateDeviceResponse.SerializeToString,
+            ),
+            'UpdateDeviceProperties': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateDeviceProperties,
+                    request_deserializer=server__pb2.UpdateDevicePropertiesRequest.FromString,
+                    response_serializer=server__pb2.UpdateDevicePropertiesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -892,6 +909,33 @@ class QuReedManagement(object):
             '/qureed_project_server.QuReedManagement/GenerateDevices',
             server__pb2.GenerateDeviceRequest.SerializeToString,
             server__pb2.GenerateDeviceResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateDeviceProperties(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedManagement/UpdateDeviceProperties',
+            server__pb2.UpdateDevicePropertiesRequest.SerializeToString,
+            server__pb2.UpdateDevicePropertiesResponse.FromString,
             options,
             channel_credentials,
             insecure,

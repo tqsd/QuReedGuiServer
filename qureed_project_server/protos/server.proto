@@ -61,6 +61,9 @@ service QuReedManagement {
   // Generate new devices
   rpc GenerateDevices (GenerateDeviceRequest) returns (GenerateDeviceResponse);
 
+  // Update properties of existing device instance
+  rpc UpdateDeviceProperties (UpdateDevicePropertiesRequest) returns (UpdateDevicePropertiesResponse);
+
 }
 
 // Server Management Messages
@@ -271,6 +274,15 @@ message DisconnectDevicesRequest {
 }
 
 message DisconnectDevicesResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message UpdateDevicePropertiesRequest {
+  Device device = 1;
+}
+
+message UpdateDevicePropertiesResponse {
   string status = 1;
   string message = 2;
 }

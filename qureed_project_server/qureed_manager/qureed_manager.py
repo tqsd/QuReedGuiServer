@@ -70,7 +70,6 @@ class QuReedManager:
                 
             custom_module = Path(VM.path).parents[0] / "custom"
             spec = importlib.util.spec_from_file_location("custom", custom_module)
-            custom = importlib.util.module_from_spec(spec)
 
             # Getting Custom Devices
             for root, _, files in os.walk(custom_devices_path):

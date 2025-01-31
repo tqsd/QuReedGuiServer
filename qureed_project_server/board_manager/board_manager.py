@@ -2,6 +2,7 @@ import json
 from qureed_project_server.logic_modules import LogicModuleEnum,LogicModuleHandler
 from qureed_project_server import server_pb2
 from google.protobuf.struct_pb2 import Struct
+from google.protobuf.json_format import MessageToDict
 
 LMH = LogicModuleHandler()
 
@@ -208,3 +209,15 @@ class BoardManager:
         self.devices.remove(dev)
         
         
+
+    def update_device_properties(self, device:server_pb2.Device):
+        dev = self.get_device(device.uuid)
+        new_properties = MessageToDict(device.device_properties.properties)
+        print(new_properties)
+        
+        for key, item in new_properties.items():
+            print(f"{key}:{item}")
+            if "value" in item:
+                print(f"setting {key}, {item['value']}")
+                dev.set_property(key, item["value"])
+                
