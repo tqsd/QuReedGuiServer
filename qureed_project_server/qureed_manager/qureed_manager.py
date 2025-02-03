@@ -245,6 +245,7 @@ class QuReedManager:
             
 
     def create_device_message(self, device_class):
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
         class_name = device_class.__name__
         module_class = f"{device_class.__module__}.{device_class.__qualname__}"
         gui_name = getattr(device_class, "gui_name", None)
@@ -264,15 +265,20 @@ class QuReedManager:
                         signal_type=str(port.signal_type.__name__)
                     ))
 
+        device_instance = device_class()
+        properties = BM.serialize_properties(device_instance.properties)
+        del device_instance
+
         device_msg = server_pb2.Device(
             class_name=class_name,
             gui_name=gui_name,
             module_class=module_class,
             ports=ports,
             gui_tags=gui_tags,
+            device_properties=server_pb2.DeviceProperties(
+                properties=properties),
             icon=server_pb2.GetIconResponse(
-                abs_path=gui_icon
-                )
+                abs_path=gui_icon)
             )
 
         return device_msg
@@ -345,6 +351,7 @@ class QuReedManager:
 
     def create_device_message_from_module(self, module):
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
         project_root = Path(VM.path).parents[0]
         device_classes = []
         device_messages = []
@@ -388,12 +395,17 @@ class QuReedManager:
                     gui_name = class_name
 
                 # Construct the Device Protobuf message
+                attr_instance = attr()
+                properties = BM.serialize_properties(attr_instance.properties)
+                del attr_instance
                 device_message = server_pb2.Device(
                     class_name=class_name,
                     gui_name=gui_name,
                     module_class=f"{module_name}.{class_name}",
                     ports=ports,
                     gui_tags=gui_tags,
+                    device_properties=server_pb2.DeviceProperties(
+                        properties=properties),
                     icon=server_pb2.GetIconResponse(
                         abs_path=gui_icon
                     )

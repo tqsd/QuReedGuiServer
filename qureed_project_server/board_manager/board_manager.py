@@ -207,8 +207,6 @@ class BoardManager:
     def remove_device(self, device_uuid):
         dev = self.get_device(device_uuid)
         self.devices.remove(dev)
-        
-        
 
     def update_device_properties(self, device:server_pb2.Device):
         dev = self.get_device(device.uuid)
@@ -219,5 +217,9 @@ class BoardManager:
             print(f"{key}:{item}")
             if "value" in item:
                 print(f"setting {key}, {item['value']}")
-                dev.set_property(key, item["value"])
+                value = item["value"]
+                if item['type'] == "int":
+                    value=int(value)
+                    
+                dev.set_property(key, value)
                 
