@@ -4,6 +4,7 @@ from qureed_project_server.venv_management.venv_manager import VenvManager
 class VenvManagementServicer(server_pb2_grpc.VenvManagementServicer):
 
     def Connect(self, request, context):
+        print("CLIENT IS ATTEMPTING TO CONNECT TO THIS SERVER")
         venv_manager = VenvManager()
         try:
             venv_manager.connect(request.venv_path)

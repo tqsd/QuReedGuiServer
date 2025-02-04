@@ -10,12 +10,14 @@ setup(
     version="0.0.1",
     author="Simon Sekavčnik",
     author_email="simon.sekavcnik@tum.de",
-    description="QuReed Grafical Interface",
+    description="QuReed Grafical Interface Server",
     license="Apache 2.0",
     packages=find_packages(where="."),
     install_requires=[
         "grpcio",
-        "protobuf"
+        "protobuf",
+        "virtualenv-api",
+        "mpmath"
     ],
     entry_points={
         "console_scripts": [

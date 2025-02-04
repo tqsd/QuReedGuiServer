@@ -7,6 +7,7 @@ LMH = LogicModuleHandler()
 class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
 
     def GetDevices(self, request, context):
+        print("Grabing all of the devices (SERVER)")
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
         try:
             devices, message = QM.get_devices()
@@ -16,8 +17,8 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 devices=devices,
                 message=message
             )
-            
         except Exception as e:
+            traceback.print_exc()
             return server_pb2.GetDevicesResponse(
                 status="failure",
                 message=f"Error in fetching the devices: {e}"
@@ -55,7 +56,6 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
 
     def GenerateDevices(self, request, context):
         try:
-            print("Generate Device")
             QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
             QM.generate_new_device(request.device)
             return server_pb2.GenerateDeviceResponse(
@@ -68,11 +68,11 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 message=f"Error during device generation: {e}"
                 )
         
-
     def OpenBoard(self, request, context):
-        QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
+        print("OPENING BOARD")
+        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
         try:
-            devices_msg, connections_msg = QM.open_scheme(request.board)
+            devices_msg, connections_msg = BM.open_scheme(request.board)
 
             return server_pb2.OpenBoardResponse(
                 status="success",

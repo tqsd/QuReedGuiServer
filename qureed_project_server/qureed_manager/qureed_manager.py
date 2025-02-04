@@ -11,25 +11,67 @@ from qureed_project_server import server_pb2
 from google.protobuf.json_format import MessageToDict
 import pkgutil
 from jinja2 import Environment, FileSystemLoader
-#from qureed.devices.generic_device import GenericDevice
 
 LMH = LogicModuleHandler()
 
 class QuReedManager:
-    _instance = None
+    """
+    QuReedManager (Singleton) manages different aspects of the QuReed
+
+    It manages the dynamic importing and the 
+
+    Attributes:
+    -----------
+    initialized (bool): Initialization flag for the Singleton Pattern
+
+    Methods:
+    --------
+    get_devices(): Gets all the devices (Built-in and Custom in the project)    
+    get_all_icons(): Gets all icons (Built-in and Custom in the project)
+    get_all_signals(): Gets all signals (Built-in and Custom in the project)
+    generate_new_device(device): Generates new Custom device in the project
+    get_icon_location(icon): Gets abs location of the requested icon
+    create_device_message(device_class): Generates a device message from 
+        the device class
+    load_custom_as_package(): Loads Custom (custom elements in the project)
+    get_device(device_request): Dynamically loadst the device module and
+        returns the class in list
+    create_device_message_from_module(module): Creates the list of device
+        messages from the given module
+    get_class(module_class): Gets a class defined by the module.class notation
     
+    Examples:
+    ---------
+    Example of usage:
+        >>> from qureed_project_server.logic_modules import (
+        >>> LogicModuleEnum,LogicModuleHandler)
+        >>> QM = LogicModuleEnum().get_logic(LogicModuleEnum.QUREED_MANAGER)
+        >>> devices = QM.get_devices()
+    """
+    _instance = None
+
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(QuReedManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
-            
+
     def __init__(self):
         if not hasattr(self, "initialized"):
             LMH.register(LogicModuleEnum.QUREED_MANAGER, self)
-            self.opened_scheme = None
             self.initialized = True
 
-    def get_devices(self):
+    def get_devices(self) -> tuple[list[server_pb2.Device], str]:
+        """
+        Get all of the devices available in the project (Built-in and Custom)
+
+        It transverses the custom directory and the directory of 'qureed' to 
+        assemble the list of existing devices
+
+        Returns:
+        --------
+        tuple[list[Device], str]: Returns the tuple of the list of existing devices
+            as messages and a message string if anything went wrong
+        """
         try:
             VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
             spec = importlib.util.find_spec("qureed")
@@ -180,7 +222,6 @@ class QuReedManager:
                         if inspect.isclass(attr) and issubclass(attr, GenericSignal) or attr is GenericSignal:
                             if attr not in signals:
                                 signals.add(attr)
-
         signals_msg = []
         
         for s in signals:
@@ -211,15 +252,15 @@ class QuReedManager:
             }
         properties=MessageToDict(device.device_properties.properties)
         gui_icon=device.icon.name
-        if "custom/" in gui_icon:
-            gui_icon = f'"{gui_icon}"'
+        gui_icon = gui_icon.replace("\\", "/")
+
         rendered_device = template.render(
             name=device.gui_name,
             class_name=class_name,
             tags=list(device.gui_tags),
             input_ports=input_ports,
             output_ports=output_ports,
-            gui_icon=device.icon.name,
+            gui_icon=gui_icon,
             properties=properties,
             custom=True
             )
@@ -234,15 +275,17 @@ class QuReedManager:
         if not icon:
             return ""
 
-        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        # Normalize the icon path to use forward slashes (cross-platform)
+        normalized_icon = icon.replace("\\", "/")
         
-        if "custom" in icon.split("/"):
-            return str(Path(VM.path).parents[0] / icon.lstrip("/"))
+        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+
+        if "custom/icons" in normalized_icon:
+            return str(Path(VM.path).parents[0] / normalized_icon.lstrip("/"))
         else:
             loader = pkgutil.get_loader("qureed")
             if loader and loader.is_package("qureed"):
-                return str(Path(loader.get_filename()).parent / "assets" /icon)
-            
+                return str(Path(loader.get_filename()).parent / "assets" / normalized_icon)
 
     def create_device_message(self, device_class):
         BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
@@ -320,7 +363,6 @@ class QuReedManager:
                     
         import_submodules("custom.signals")
         import_submodules("custom.devices")
-
  
     def get_device(self, device_request:server_pb2.GetDeviceRequest):
         """
@@ -375,12 +417,14 @@ class QuReedManager:
 
                 try:
                     # Try to calculate the relative path
-                    relative_path = module_path.relative_to(project_root).with_suffix("")
-                    module_name = ".".join(relative_path.parts)
+                    if module.__name__.startswith("qureed"):
+                        module_name = module.__name__
+                    else:
+                        relative_path = module_path.relative_to(project_root).with_suffix("")
+                        module_name = ".".join(relative_path.parts)
                 except ValueError:
                     # Fallback to using the absolute path if outside project_root
                     module_name = module.__name__
-
                 # Handle ports if defined
                 ports = []
                 if hasattr(attr, "ports"):
@@ -415,18 +459,6 @@ class QuReedManager:
 
         return device_messages
 
-    def open_scheme(self, board):
-        VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
-        BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
-        project_root = Path(VM.path).parents[0]
-        scheme = project_root / board
-
-
-        with open(scheme, "r") as f:
-            data = json.load(f)
-
-        return BM.open_scheme(scheme, data)
-
     def get_class(self, mc: str):
         """
         Gets the class based on the device_mc
@@ -457,13 +489,16 @@ class QuReedManager:
 
             return cls
         except ModuleNotFoundError:
+            traceback.print_exc()
             print(f"Module '{module_name}' not found.")
             print(sys.path)
             print(sys.executable)
             raise
         except AttributeError:
+            traceback.print_exc()
             print(f"Class '{class_name}' not found in module '{module_name}'.")
             raise
         except Exception as e:
+            traceback.print_exc()
             print(f"An error occurred: {e}")
             raise

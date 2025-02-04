@@ -52,6 +52,8 @@ class VenvManager:
         print(f"Loading 'custom' as a package")
         QM = LMH.get_logic(LogicModuleEnum.QUREED_MANAGER)
         QM.load_custom_as_package()
+        # Preemptively import all devices
+        QM.get_devices()
 
 
     def install(self, package:str) -> None:
