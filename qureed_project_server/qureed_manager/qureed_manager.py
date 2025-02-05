@@ -1,5 +1,5 @@
 import json
-import typing
+import types
 import re
 import sys
 import importlib.util
@@ -486,14 +486,14 @@ class QuReedManager:
 
     def create_device_message_from_module(
         self,
-        module: typing.ModuleType
+        module: types.ModuleType
         ) -> list[server_pb2.Device]:
         """
         Creates a list of messages for all devices found in the given module
 
         Parameters:
         -----------
-        module (typing.ModuleType): The module in which this method searches for the
+        module (types.ModuleType): The module in which this method searches for the
         devices
 
         Returns:
