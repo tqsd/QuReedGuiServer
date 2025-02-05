@@ -21,7 +21,7 @@ def serve(port):
     )
 
     # Bind to a port
-    server.add_insecure_port(f"[::]:{port}")
+    server.add_insecure_port(f"127.0.0.1:{port}")
     server.start()
     print(f"Server started on port {port}")
     server.wait_for_termination()
