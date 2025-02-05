@@ -2,6 +2,10 @@ from qureed_project_server import server_pb2_grpc, server_pb2
 from qureed_project_server.venv_management.venv_manager import VenvManager
 
 class VenvManagementServicer(server_pb2_grpc.VenvManagementServicer):
+    """
+    VenvManagementServicer implements the sevicer (as defined in
+    the protos/server.proto). It defines all rpc gateways
+    """
 
     def Connect(self, request, context):
         print("CLIENT IS ATTEMPTING TO CONNECT TO THIS SERVER")

@@ -4,7 +4,12 @@ from qureed_project_server.logic_modules import LogicModuleHandler, LogicModuleE
 
 LMH = LogicModuleHandler()
 
+
 class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
+    """
+    QuReedManagementServicer implements the servicer (as defined in
+    the protos/server.proto). It defines all rpc gateways.
+    """
 
     def GetDevices(self, request, context):
         print("Grabing all of the devices (SERVER)")
