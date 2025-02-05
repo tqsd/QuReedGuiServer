@@ -4,6 +4,10 @@ from qureed_project_server import server_pb2, server_pb2_grpc
 
 
 class GrpcClient:
+    """
+    GrpcClient for comuniction, this client exposes all servicers for the
+    communication with the server.
+    """
     def __init__(self, server_address):
         """
         Initializes the gRPC client.
