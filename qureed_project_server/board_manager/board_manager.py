@@ -27,6 +27,7 @@ class BoardManager:
     manages the addition and removal of devices and connections.
 
     Attributes:
+    -----------
     opened_scheme (Optional[str]): Currently opened scheme
         (None if no scheme is opened)
     initialized (bool): Initialization flag for the Singleton pattern
@@ -34,6 +35,7 @@ class BoardManager:
     connections (list): List of connections on the current board
 
     Methods:
+    --------
     open_scheme(board:str): Opens a new scheme
     save_scheme(request:SaveBoardRequest): Saves the scheme, gets
         positions from the given request
