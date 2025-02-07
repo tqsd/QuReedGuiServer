@@ -22,6 +22,7 @@ setup(
     entry_points={
         "console_scripts": [
             "qureed_server=qureed_project_server.server:main",  # Maps the 'qureed_server' command to 'server.py'
+            "qureed_simulate=qureed_project_server.simulation.simulation:main"
         ],
     },
 )

@@ -66,6 +66,25 @@ service QuReedManagement {
 
 }
 
+service QuReedSimulation {
+
+  // Starts the simulation
+  rpc StartSimulation (StartSimulationRequest) returns (StartSimulationResponse);
+
+  // Stops the simulation
+  rpc StopSimulation (StopSimulationRequest) returns (StopSimulationResponse);
+
+  // Simulation Logs
+  rpc SimulationLogging (SimulationLoggingRequest) returns (SimulationLoggingResponse);
+
+  // Perfomance Logs
+  rpc PerfomanceLogging (PerformanceLoggingRequest) returns (PerformanceLoggingResponse);
+
+  //Simulation Log Submision
+  rpc SimulationLogSubmission (SubmitSimulationLogRequest) returns (SubmitSimulationLogResponse);
+
+}
+
 // Server Management Messages
 
 message StatusRequest {
@@ -286,3 +305,63 @@ message UpdateDevicePropertiesResponse {
   string status = 1;
   string message = 2;
 }
+
+// ---------------------
+// Simulation Managmenet
+// ---------------------
+
+message StartSimulationRequest {
+  string scheme_path = 1;
+}
+
+message StartSimulationResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message StopSimulationRequest {
+}
+
+message StopSimulationResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message SimulationLoggingRequest {
+}
+
+message SimulationLog {
+  float timestamp = 1;
+  float simulation_timestamp = 2;
+  string log_type = 3;
+  string device_name = 4;
+  string message = 5;
+  string error = 6;
+}
+
+message SimulationLoggingResponse {
+  string status = 1;
+  string message = 2;
+  SimulationLog log = 3;
+}
+
+message PerformanceLoggingRequest {
+}
+
+message PerformanceLog {
+  float used_ram = 1;
+  float available_ram = 2;
+  float used_cpu = 3;
+}
+
+message PerformanceLoggingResponse {
+  string status = 1;
+  string message = 2;
+  PerformanceLog log = 3;
+}
+
+message SubmitSimulationLogRequest {
+  SimulationLog log = 1;
+}
+
+message SubmitSimulationLogResponse {}

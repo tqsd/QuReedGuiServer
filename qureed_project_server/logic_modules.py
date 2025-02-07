@@ -4,6 +4,7 @@ class LogicModuleEnum(StrEnum):
     VENV_MANAGER = "venv_manager"
     QUREED_MANAGER = "qureed_manager"
     BOARD_MANAGER = "board_manager"
+    SIMULATION_MANAGER = "simulation_manager"
 
 class LogicModuleHandler:
     _instance = None

@@ -6,6 +6,7 @@ from qureed_project_server import server_pb2_grpc
 from qureed_project_server.venv_management import VenvManagementServicer
 from qureed_project_server.server_management import ServerManagementServicer
 from qureed_project_server.qureed_manager import QuReemManagementService
+from qureed_project_server.qureed_simulation_manager import QuReedSimulationServicer
 
 
 def serve(port):
@@ -13,11 +14,16 @@ def serve(port):
 
     # Add services to the server
     server_pb2_grpc.add_ServerManagementServicer_to_server(
-        ServerManagementServicer(server), server)
+        ServerManagementServicer(server), server
+    )
     server_pb2_grpc.add_VenvManagementServicer_to_server(
-        VenvManagementServicer(), server)
+        VenvManagementServicer(), server
+    )
     server_pb2_grpc.add_QuReedManagementServicer_to_server(
         QuReemManagementService(), server
+    )
+    server_pb2_grpc.add_QuReedSimulationServicer_to_server(
+        QuReedSimulationServicer(), server
     )
 
     # Bind to a port

@@ -20,6 +20,7 @@ class GrpcClient:
         self.venv_stub = server_pb2_grpc.VenvManagementStub(self.channel)
         self.qm_stub = server_pb2_grpc.QuReedManagementStub(self.channel)
         self.server_stub = server_pb2_grpc.ServerManagementStub(self.channel)
+        self.simulation_stub = server_pb2_grpc.QuReedSimulationStub(self.channel)
 
     async def call(self, callable_function, message):
         """

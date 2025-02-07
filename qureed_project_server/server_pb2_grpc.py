@@ -945,3 +945,252 @@ class QuReedManagement(object):
             timeout,
             metadata,
             _registered_method=True)
+
+
+class QuReedSimulationStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.StartSimulation = channel.unary_unary(
+                '/qureed_project_server.QuReedSimulation/StartSimulation',
+                request_serializer=server__pb2.StartSimulationRequest.SerializeToString,
+                response_deserializer=server__pb2.StartSimulationResponse.FromString,
+                _registered_method=True)
+        self.StopSimulation = channel.unary_unary(
+                '/qureed_project_server.QuReedSimulation/StopSimulation',
+                request_serializer=server__pb2.StopSimulationRequest.SerializeToString,
+                response_deserializer=server__pb2.StopSimulationResponse.FromString,
+                _registered_method=True)
+        self.SimulationLogging = channel.unary_unary(
+                '/qureed_project_server.QuReedSimulation/SimulationLogging',
+                request_serializer=server__pb2.SimulationLoggingRequest.SerializeToString,
+                response_deserializer=server__pb2.SimulationLoggingResponse.FromString,
+                _registered_method=True)
+        self.PerfomanceLogging = channel.unary_unary(
+                '/qureed_project_server.QuReedSimulation/PerfomanceLogging',
+                request_serializer=server__pb2.PerformanceLoggingRequest.SerializeToString,
+                response_deserializer=server__pb2.PerformanceLoggingResponse.FromString,
+                _registered_method=True)
+        self.SimulationLogSubmission = channel.unary_unary(
+                '/qureed_project_server.QuReedSimulation/SimulationLogSubmission',
+                request_serializer=server__pb2.SubmitSimulationLogRequest.SerializeToString,
+                response_deserializer=server__pb2.SubmitSimulationLogResponse.FromString,
+                _registered_method=True)
+
+
+class QuReedSimulationServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def StartSimulation(self, request, context):
+        """Starts the simulation
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StopSimulation(self, request, context):
+        """Stops the simulation
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SimulationLogging(self, request, context):
+        """Simulation Logs
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def PerfomanceLogging(self, request, context):
+        """Perfomance Logs
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SimulationLogSubmission(self, request, context):
+        """Simulation Log Submision
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_QuReedSimulationServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'StartSimulation': grpc.unary_unary_rpc_method_handler(
+                    servicer.StartSimulation,
+                    request_deserializer=server__pb2.StartSimulationRequest.FromString,
+                    response_serializer=server__pb2.StartSimulationResponse.SerializeToString,
+            ),
+            'StopSimulation': grpc.unary_unary_rpc_method_handler(
+                    servicer.StopSimulation,
+                    request_deserializer=server__pb2.StopSimulationRequest.FromString,
+                    response_serializer=server__pb2.StopSimulationResponse.SerializeToString,
+            ),
+            'SimulationLogging': grpc.unary_unary_rpc_method_handler(
+                    servicer.SimulationLogging,
+                    request_deserializer=server__pb2.SimulationLoggingRequest.FromString,
+                    response_serializer=server__pb2.SimulationLoggingResponse.SerializeToString,
+            ),
+            'PerfomanceLogging': grpc.unary_unary_rpc_method_handler(
+                    servicer.PerfomanceLogging,
+                    request_deserializer=server__pb2.PerformanceLoggingRequest.FromString,
+                    response_serializer=server__pb2.PerformanceLoggingResponse.SerializeToString,
+            ),
+            'SimulationLogSubmission': grpc.unary_unary_rpc_method_handler(
+                    servicer.SimulationLogSubmission,
+                    request_deserializer=server__pb2.SubmitSimulationLogRequest.FromString,
+                    response_serializer=server__pb2.SubmitSimulationLogResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'qureed_project_server.QuReedSimulation', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('qureed_project_server.QuReedSimulation', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class QuReedSimulation(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def StartSimulation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedSimulation/StartSimulation',
+            server__pb2.StartSimulationRequest.SerializeToString,
+            server__pb2.StartSimulationResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StopSimulation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedSimulation/StopSimulation',
+            server__pb2.StopSimulationRequest.SerializeToString,
+            server__pb2.StopSimulationResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SimulationLogging(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedSimulation/SimulationLogging',
+            server__pb2.SimulationLoggingRequest.SerializeToString,
+            server__pb2.SimulationLoggingResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def PerfomanceLogging(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedSimulation/PerfomanceLogging',
+            server__pb2.PerformanceLoggingRequest.SerializeToString,
+            server__pb2.PerformanceLoggingResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SimulationLogSubmission(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qureed_project_server.QuReedSimulation/SimulationLogSubmission',
+            server__pb2.SubmitSimulationLogRequest.SerializeToString,
+            server__pb2.SubmitSimulationLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
