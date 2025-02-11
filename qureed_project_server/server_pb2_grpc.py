@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import qureed_project_server.server_pb2 as server__pb2
+from qureed_project_server import server_pb2 as server__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -981,6 +981,11 @@ class QuReedSimulationStub(object):
                 request_serializer=server__pb2.SubmitSimulationLogRequest.SerializeToString,
                 response_deserializer=server__pb2.SubmitSimulationLogResponse.FromString,
                 _registered_method=True)
+        self.SimulationLogStream = channel.unary_stream(
+                '/qureed_project_server.QuReedSimulation/SimulationLogStream',
+                request_serializer=server__pb2.SimulationLogStreamRequest.SerializeToString,
+                response_deserializer=server__pb2.SimulationLogStreamResponse.FromString,
+                _registered_method=True)
 
 
 class QuReedSimulationServicer(object):
@@ -1021,6 +1026,13 @@ class QuReedSimulationServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SimulationLogStream(self, request, context):
+        """Simulation Log Stream
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_QuReedSimulationServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -1048,6 +1060,11 @@ def add_QuReedSimulationServicer_to_server(servicer, server):
                     servicer.SimulationLogSubmission,
                     request_deserializer=server__pb2.SubmitSimulationLogRequest.FromString,
                     response_serializer=server__pb2.SubmitSimulationLogResponse.SerializeToString,
+            ),
+            'SimulationLogStream': grpc.unary_stream_rpc_method_handler(
+                    servicer.SimulationLogStream,
+                    request_deserializer=server__pb2.SimulationLogStreamRequest.FromString,
+                    response_serializer=server__pb2.SimulationLogStreamResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -1185,6 +1202,33 @@ class QuReedSimulation(object):
             '/qureed_project_server.QuReedSimulation/SimulationLogSubmission',
             server__pb2.SubmitSimulationLogRequest.SerializeToString,
             server__pb2.SubmitSimulationLogResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SimulationLogStream(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            '/qureed_project_server.QuReedSimulation/SimulationLogStream',
+            server__pb2.SimulationLogStreamRequest.SerializeToString,
+            server__pb2.SimulationLogStreamResponse.FromString,
             options,
             channel_credentials,
             insecure,

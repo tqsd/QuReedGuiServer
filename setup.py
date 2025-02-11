@@ -17,7 +17,8 @@ setup(
         "grpcio",
         "protobuf",
         "virtualenv-api",
-        "mpmath"
+        "mpmath",
+        "jinja2"
     ],
     entry_points={
         "console_scripts": [

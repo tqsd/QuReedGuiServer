@@ -99,6 +99,7 @@ class BoardManager:
         devices and connections respectively
         """
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
+        print("OPENING SCHEME")
         project_root = Path(VM.path).parents[0]
         scheme_name = project_root / board
         with open(scheme_name, "r") as f:
@@ -117,7 +118,7 @@ class BoardManager:
             device = device_class(uid=device_descriptor["uuid"])
             if "properties" in device_descriptor:
                 device.properties = device_descriptor["properties"]
-
+            
             self.devices.append(device)
             device_msg = QM.create_device_message(device_class)
             device_msg.uuid = device_descriptor["uuid"]

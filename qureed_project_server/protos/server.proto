@@ -83,6 +83,9 @@ service QuReedSimulation {
   //Simulation Log Submision
   rpc SimulationLogSubmission (SubmitSimulationLogRequest) returns (SubmitSimulationLogResponse);
 
+  //Simulation Log Stream
+  rpc SimulationLogStream (SimulationLogStreamRequest) returns (stream SimulationLogStreamResponse);
+
 }
 
 // Server Management Messages
@@ -312,6 +315,7 @@ message UpdateDevicePropertiesResponse {
 
 message StartSimulationRequest {
   string scheme_path = 1;
+  string simulation_id = 2;
 }
 
 message StartSimulationResponse {
@@ -335,8 +339,10 @@ message SimulationLog {
   float simulation_timestamp = 2;
   string log_type = 3;
   string device_name = 4;
-  string message = 5;
-  string error = 6;
+  string device_type = 5;
+  string message = 6;
+  string error = 7;
+  string simulation_id = 8;
 }
 
 message SimulationLoggingResponse {
@@ -365,3 +371,9 @@ message SubmitSimulationLogRequest {
 }
 
 message SubmitSimulationLogResponse {}
+
+message SimulationLogStreamRequest {}
+
+message SimulationLogStreamResponse {
+  SimulationLog log = 1;
+}

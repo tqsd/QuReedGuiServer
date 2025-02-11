@@ -369,7 +369,7 @@ class QuReedManager:
                         signal_type=str(port.signal_type.__name__)
                     ))
 
-        device_instance = device_class()
+        device_instance = device_class(trigger=False)
         properties = BM.serialize_properties(device_instance.properties)
         del device_instance
 

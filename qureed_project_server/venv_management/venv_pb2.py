@@ -1,26 +1,26 @@
 from qureed_project_server import server_pb2_grpc, server_pb2
 from qureed_project_server.venv_management.venv_manager import VenvManager
 
+
 class VenvManagementServicer(server_pb2_grpc.VenvManagementServicer):
     """
     VenvManagementServicer implements the sevicer (as defined in
     the protos/server.proto). It defines all rpc gateways
     """
-
     def Connect(self, request, context):
         print("CLIENT IS ATTEMPTING TO CONNECT TO THIS SERVER")
         venv_manager = VenvManager()
         try:
-            venv_manager.connect(request.venv_path)
+            venv_manager.connect(request.venv_path, context=context)
             return server_pb2.VenvConnectResponse(
                 status="success",
                 message=f"Connected to {request.venv_path}")
         except Exception as e:
+            print("ERROR IN CONNECTING", e)
             return server_pb2.VenvConnectResponse(
                 status="failure",
                 message=f"Connection to venv failed due to error: {e}")
             
-
     def Freeze(self, request, context):
         venv_manager = VenvManager()
         if venv_manager.venv:

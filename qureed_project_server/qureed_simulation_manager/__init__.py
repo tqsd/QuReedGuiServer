@@ -1,1 +1,4 @@
 from .qureed_simulation_pb import QuReedSimulationServicer
+from .qureed_simulation_manager import QuReedSimulationManager
+
+QuReedSimulationManager()

@@ -46,10 +46,11 @@ class VenvManager:
         if not hasattr(self, "initialized"):
             self.venv = None
             self.path = None
+            self.client_id = None
             LMH.register(LogicModuleEnum.VENV_MANAGER, self)
             self.initialized = True
 
-    def connect(self, path:str) -> None:
+    def connect(self, path:str, context) -> None:
         """
         Connects to the project "runtime"
 
@@ -61,9 +62,12 @@ class VenvManager:
         ------
            This method also imports the project into the system path
         """
+        print("CONNECTING")
+        print(path)
         self.path = path
         self.venv = VirtualEnvironment(path)
         # Add the 'custom' directory to sys.path
+        self.gui_client = context
 
         custom_path = Path(self.path).parents[0] / "custom"
         # Add the parent of 'custom' to sys.path
@@ -81,6 +85,7 @@ class VenvManager:
         QM.load_custom_as_package()
         # Preemptively import all devices
         QM.get_devices()
+        print("CONNECTED")
 
 
     def install(self, package:str) -> None:
