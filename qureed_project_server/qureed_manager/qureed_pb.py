@@ -74,7 +74,6 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                 )
         
     def OpenBoard(self, request, context):
-        print("OPENING BOARD")
         BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
         try:
             devices_msg, connections_msg = BM.open_scheme(request.board)

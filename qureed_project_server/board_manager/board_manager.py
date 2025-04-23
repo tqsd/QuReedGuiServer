@@ -99,7 +99,6 @@ class BoardManager:
         devices and connections respectively
         """
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
-        print("OPENING SCHEME")
         project_root = Path(VM.path).parents[0]
         scheme_name = project_root / board
         with open(scheme_name, "r") as f:
@@ -126,6 +125,7 @@ class BoardManager:
                 # Create a Struct object and populate it
                 properties = Struct()
                 properties.update(device_descriptor["properties"])
+                device.proterties = properties
 
                 # Assign it to the device_properties field
                 device_msg.device_properties.properties.CopyFrom(properties)

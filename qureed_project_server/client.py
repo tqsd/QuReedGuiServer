@@ -53,14 +53,12 @@ async def main():
         client.venv_stub.Connect,
         server_pb2.VenvConnectRequest(venv_path="/home/simon/tmp/c/.venv/")
     )
-    print(connect_response)
 
     # Call GetDevices using the generic method
     devices_response = await client.call(
         client.qm_stub.GetDevices,
         server_pb2.GetDevicesRequest()
     )
-    print(devices_response)
 
     # Close the client
     await client.close()

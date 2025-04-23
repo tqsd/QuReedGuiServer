@@ -55,6 +55,7 @@ class QuReedSimulationManager:
                         if line.strip():
                             print(f"[SIM STDERR] {line.strip()}")
                 finally:
+                    print("SIMULATION STOPPED")
                     process.stdout.close()
                     process.stderr.close()
 
@@ -68,18 +69,15 @@ class QuReedSimulationManager:
         self.simulation_servicer = servicer
 
 
-    def start_simulation(self, scheme:str, simulation_id:str):
-        print("STARTING THE SIMULATION QRSM")
+    def start_simulation(self, scheme:str, simulation_id:str, simulation_time:float):
         if self.running_simulation:
             raise SimulationAlreadyRunningError(
                 "Only one simulation can be running at a time."
             )
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
-        print(VM.path)
         python_executable = Path(VM.path) / (
             "bin/python" if sys.platform != "win32" else "Scripts/qureed_simulate.exe"
         )
-        print("AFTER")
 
         if not python_executable.exists():
             raise FileNotFoundError(
@@ -96,10 +94,19 @@ class QuReedSimulationManager:
            "--port", str(self.port),
            "--scheme", scheme, 
             "--simulation-id", simulation_id,
-            "--duration", "10"
+            "--duration", str(simulation_time)
             ]
         print(python_executable)
-        env = {**os.environ, "PYTHONIOENCODING": "utf-8", "LC_ALL": "en_US.UTF-8"}
+        env = {
+            **os.environ, 
+            "PYTHONIOENCODING": 
+            "utf-8", 
+            "LC_ALL": 
+            "en_US.UTF-8",
+            "PYTHONBUFFERED": "1"}
+        if sys.platform == "win32":
+            command = ["start", "cmd", "/k", " ".join(command) + " & exit"]
+        print(command)
         self.running_simulation = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
@@ -122,3 +129,7 @@ class QuReedSimulationManager:
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         if self.simulation_servicer:
             self.simulation_servicer.send_log_to_gui(log)
+
+    def handle_simulation_end(self):
+        print("ENDING THE SIMULATION -------")
+        self.running_simulation = None

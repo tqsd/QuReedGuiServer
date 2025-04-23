@@ -316,6 +316,7 @@ message UpdateDevicePropertiesResponse {
 message StartSimulationRequest {
   string scheme_path = 1;
   string simulation_id = 2;
+  float simulation_time = 3;
 }
 
 message StartSimulationResponse {
@@ -334,6 +335,12 @@ message StopSimulationResponse {
 message SimulationLoggingRequest {
 }
 
+message Tensor {
+  repeated double real_values = 1;
+  repeated double imag_values = 2;
+  repeated int32 shape = 3;
+}
+
 message SimulationLog {
   float timestamp = 1;
   float simulation_timestamp = 2;
@@ -343,6 +350,9 @@ message SimulationLog {
   string message = 6;
   string error = 7;
   string simulation_id = 8;
+  bool end = 9;
+  Tensor tensor = 11;
+  string figure = 12;
 }
 
 message SimulationLoggingResponse {

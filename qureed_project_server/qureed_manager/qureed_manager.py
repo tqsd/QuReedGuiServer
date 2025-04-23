@@ -100,27 +100,36 @@ class QuReedManager:
 
             
             # Getting builtin QuReed Devices
+            print("\n", builtin_devices_path)
             for root, _, files in os.walk(builtin_devices_path):
+                print(files)
                 for file in files:
                     if file.endswith(".py") and not file.startswith("__"):
+                        print(f" INSPECTING FILE: {file}")
                         module_path = Path(root) / file
+                        print(f" GD--> MODULE PATH: {module_path}")
                         module_name = "qureed."+str(
                             module_path.relative_to(qureed_path)).replace(
                                 os.sep, ".").replace(".py", "")
-
+                        print(f" GD--> MODULE NAME: {module_name}")
                         # Dynamically import the module
                         spec = importlib.util.spec_from_file_location(
                             module_name, module_path
                             )
+                        print(f" GD--> SPEC: {spec}")
                         module = importlib.util.module_from_spec(spec)
+                        print(f" GD--> MODULE: {module}")
                         try:
+                            print(f" ---> exec_module({module})")
                             spec.loader.exec_module(module)
                         except Exception as e:
+                            print(" X--> EXCEPTION {e}")
                             continue
+                        print(" GD--> CONSTRUCTING MESSAGE")
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
 
-                
+            print("GOT BUILTIN DEVICES") 
             custom_module = Path(VM.path).parents[0] / "custom"
             spec = importlib.util.spec_from_file_location("custom", custom_module)
 
@@ -351,6 +360,7 @@ class QuReedManager:
         BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
         class_name = device_class.__name__
         module_class = f"{device_class.__module__}.{device_class.__qualname__}"
+        print(f" CDM-> Generating a message {module_class}")
         gui_name = getattr(device_class, "gui_name", None)
         if not isinstance(gui_name, str):
             gui_name = class_name
@@ -369,9 +379,14 @@ class QuReedManager:
                         signal_type=str(port.signal_type.__name__)
                     ))
 
-        device_instance = device_class(trigger=False)
-        properties = BM.serialize_properties(device_instance.properties)
-        del device_instance
+        print(f" CDM-> CREATING INSTANCE")
+        try:
+            device_instance = device_class(trigger=False)
+            properties = BM.serialize_properties(device_instance.properties)
+            del device_instance
+        except Exception as e:
+            print(f" X---> ERROR: {e}")
+
 
         device_msg = server_pb2.Device(
             class_name=class_name,
@@ -509,7 +524,6 @@ class QuReedManager:
         device_messages = []
 
         GenericDevice = self.get_class("qureed.devices.generic_device.GenericDevice")
-        GenericFiber = self.get_class("qureed.devices.fiber.generic_fiber.GenericFiber")
         for attr_name in dir(module):
             attr = getattr(module, attr_name)
 
@@ -553,7 +567,7 @@ class QuReedManager:
                     gui_name = class_name
 
                 # Construct the Device Protobuf message
-                attr_instance = attr()
+                attr_instance = attr(trigger=False)
                 properties = BM.serialize_properties(attr_instance.properties)
                 del attr_instance
                 device_message = server_pb2.Device(
@@ -596,6 +610,7 @@ class QuReedManager:
             module_name = ".".join(module_path)
 
             # Import the module dynamically
+            print(module_name)
             module = importlib.import_module(module_name)
 
             # Get the class from the module

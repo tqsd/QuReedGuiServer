@@ -1,4 +1,5 @@
 import traceback
+import queue
 import time
 
 from qureed_project_server import server_pb2_grpc, server_pb2
@@ -16,12 +17,11 @@ class QuReedSimulationServicer(server_pb2_grpc.QuReedSimulationServicer):
     def StartSimulation(self, request, context):
         try:
             SiM = LMH.get_logic(LogicModuleEnum.SIMULATION_MANAGER)
-            SiM.start_simulation(request.scheme_path, request.simulation_id)
+            SiM.start_simulation(request.scheme_path, request.simulation_id, request.simulation_time)
             return server_pb2.StartSimulationResponse(
                 status="success"
             )
         except Exception as e:
-            print("AN ERROR")
             traceback.print_exc()
             return server_pb2.StartSimulationResponse(
                 status="failure",
@@ -29,7 +29,6 @@ class QuReedSimulationServicer(server_pb2_grpc.QuReedSimulationServicer):
             )
 
     def StopSimulation(self, request, context):
-        print("Stopping the simulation")
         try:
             SiM = LMH.get_logic(LogicModuleEnum.SIMULATION_MANAGER)
             SiM.stop_simulation()
@@ -44,37 +43,36 @@ class QuReedSimulationServicer(server_pb2_grpc.QuReedSimulationServicer):
             )
             
     def SimulationLogging(self, request, context):
-        print(request)
-
+        pass
 
     def SimulationLogSubmission(self, request, context):
-        print("SOME LOGS SUBMITTED")
         SiM = LMH.get_logic(LogicModuleEnum.SIMULATION_MANAGER)
-        self.send_log_to_gui(request.log)
-        print("Tried to send the logs to the gui")
+        if hasattr(self, "log_handler"):
+            self.log_handler(request.log)
+
 
     def SimulationLogStream(self, request, context):
-        print("Subscribing to logs")
-        self.client_context = context
-        try: 
+        log_queue = queue.Queue()
+
+        def log_handler(message):
+            log_queue.put(message)
+
+        self.log_handler = log_handler
+
+        try:
             while context.is_active():
-                time.sleep(1)
+                try:
+                    log_message = log_queue.get(timeout=1)
+                    yield server_pb2.SimulationLogStreamResponse(
+                        log=log_message
+                    )
+                    if log_message.end:
+                        SiM = LMH.get_logic(LogicModuleEnum.SIMULATION_MANAGER)
+                        SiM.handle_simulation_end()
+                        break
+                except queue.Empty:
+                    pass
         except Exception as e:
-            print(e)
-            traceback.print_exc()
+            print(f"Log streame error: {e}")
         finally:
-            self.client_context = None
-
-    def send_log_to_gui(self, message):
-        print("send_logs_to_gui")
-        if not hasattr(self, "client_context"):
-            print("No GUI Client context")
-            return
-        print("GUI IS REQUESTING LOGS")
-
-        self.client_context.write(
-            server_pb2.SimulationLogStreamResponse(
-                log=message
-            )
-        )
-
+            self.log_handler = None
