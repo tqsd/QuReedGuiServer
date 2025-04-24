@@ -75,9 +75,19 @@ class QuReedSimulationManager:
                 "Only one simulation can be running at a time."
             )
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
-        python_executable = Path(VM.path) / (
-            "bin/python" if sys.platform != "win32" else "Scripts/qureed_simulate.exe"
-        )
+        cmd = "qureed_simulate.exe" if sys.platform == "win32" else "qureed_simulate"
+
+        if VM.path is None or VM.path == "None":
+            python_executable = Path(os.environ.get("QUREED_PY_EXE"))
+            sim_executable = (python_executable.parent / cmd).resolve()
+        else:
+            sim_executable = path(vm.path) / cmd
+
+        if VM.path is None or VM.path == "None":
+            project_root = Path(os.environ.get("QUREED_CWD"))
+        else:
+            project_root = Path(VM.path).parents[0]
+
 
         if not python_executable.exists():
             raise FileNotFoundError(
@@ -87,23 +97,35 @@ class QuReedSimulationManager:
             raise PortNotSetError(
                 f"Port was never set!"
             ) 
-        command = [
-            "chcp", "65001", "&",
-            str(python_executable),
-            "--base-dir", str(Path(VM.path).parents[0]),
-           "--port", str(self.port),
-           "--scheme", scheme, 
+        base_command = [
+            str(sim_executable),
+            "--base-dir", str(project_root),
+            "--port", str(self.port),
+            "--scheme", scheme,
             "--simulation-id", simulation_id,
             "--duration", str(simulation_time)
-            ]
-        print(python_executable)
+        ]
+
         env = {
-            **os.environ, 
-            "PYTHONIOENCODING": 
-            "utf-8", 
-            "LC_ALL": 
-            "en_US.UTF-8",
-            "PYTHONBUFFERED": "1"}
+            **os.environ,
+            "PYTHONIOENCODING": "utf-8",
+            "LC_ALL": "en_US.UTF-8",
+            "PYTHONBUFFERED": "1"
+        }
+
+        if sys.platform == "win32":
+            # On Windows, prepare a full command with chcp + run
+            win_command = [
+                "chcp 65001",
+                "&&",  # correct: separate the commands
+                " ".join(base_command)
+            ]
+            command = ["start", "cmd", "/k", " ".join(win_command) + " & exit"]
+            shell = True
+        else:
+            # On Linux/macOS, no chcp needed, no shell
+            command = base_command
+            shell = False
         if sys.platform == "win32":
             command = ["start", "cmd", "/k", " ".join(command) + " & exit"]
         print(command)
@@ -113,7 +135,7 @@ class QuReedSimulationManager:
             stderr=subprocess.PIPE,
             text=True,
             bufsize=1,
-            shell=True,
+            shell=shell,
             encoding="utf-8",
             env=env
         )

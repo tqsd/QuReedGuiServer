@@ -112,7 +112,7 @@ class QuReemManagementService(server_pb2_grpc.QuReedManagementServicer):
                  device=device,
                  )
         except Exception as e:
-            traceback.print_exc()
+            print(traceback.format_exc())
             
             return server_pb2.GetDeviceResponse(
                  status="failure",

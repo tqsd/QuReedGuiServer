@@ -100,36 +100,26 @@ class QuReedManager:
 
             
             # Getting builtin QuReed Devices
-            print("\n", builtin_devices_path)
             for root, _, files in os.walk(builtin_devices_path):
-                print(files)
                 for file in files:
                     if file.endswith(".py") and not file.startswith("__"):
-                        print(f" INSPECTING FILE: {file}")
                         module_path = Path(root) / file
-                        print(f" GD--> MODULE PATH: {module_path}")
                         module_name = "qureed."+str(
                             module_path.relative_to(qureed_path)).replace(
                                 os.sep, ".").replace(".py", "")
-                        print(f" GD--> MODULE NAME: {module_name}")
                         # Dynamically import the module
                         spec = importlib.util.spec_from_file_location(
                             module_name, module_path
                             )
-                        print(f" GD--> SPEC: {spec}")
                         module = importlib.util.module_from_spec(spec)
-                        print(f" GD--> MODULE: {module}")
                         try:
-                            print(f" ---> exec_module({module})")
                             spec.loader.exec_module(module)
                         except Exception as e:
                             print(" X--> EXCEPTION {e}")
                             continue
-                        print(" GD--> CONSTRUCTING MESSAGE")
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
 
-            print("GOT BUILTIN DEVICES") 
             custom_module = Path(VM.path).parents[0] / "custom"
             spec = importlib.util.spec_from_file_location("custom", custom_module)
 
@@ -149,6 +139,7 @@ class QuReedManager:
                             spec.loader.exec_module(module)
                         except Exception as e:
                             continue
+                        print("GENERATING CUSTOM DEVICE MESSAGE")
                         device_message = self.create_device_message_from_module(module)
                         device_list.extend(device_message)
                         
@@ -156,6 +147,8 @@ class QuReedManager:
             return device_list, message
 
         except Exception as e:
+            print("ERROR")
+            print(traceback.format_exc())
             traceback.print_exc()
 
     def get_all_icons(self) -> list[server_pb2.GetIconResponse]:
@@ -476,9 +469,15 @@ class QuReedManager:
 
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
 
-        custom_devices_path = Path(VM.path).parents[0] / "custom" / "devices"
+
+        if VM.path is None or VM.path == "None":
+            project_root = Path(os.environ.get("QUREED_CWD"))
+        else:
+            project_root = Path(VM.path).parents[0]
+        custom_devices_path = project_root / "custom" / "devices"
         try:
             if device_request.module_class:
+                print("NOT HERE")
                 pass
 
             elif device_request.module_path:
@@ -494,9 +493,11 @@ class QuReedManager:
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 device_message = self.create_device_message_from_module(module)
+                print("DEVICE CREATED")
                 return device_message[0]
         except Exception as e:
-            traceback.print_exc()
+            print("ERROR")
+            print(traceback.format_exc())
         raise NoDeviceFoundError("No device found")
 
     def create_device_message_from_module(
@@ -519,7 +520,10 @@ class QuReedManager:
         """
         VM = LMH.get_logic(LogicModuleEnum.VENV_MANAGER)
         BM = LMH.get_logic(LogicModuleEnum.BOARD_MANAGER)
-        project_root = Path(VM.path).parents[0]
+        if VM.path is None or VM.path == "None":
+            project_root = os.environ.get("QUREED_CWD")
+        else:
+            project_root = Path(VM.path).parents[0]
         device_classes = []
         device_messages = []
 
@@ -541,17 +545,22 @@ class QuReedManager:
                     continue
                 gui_tags = getattr(attr, "gui_tags", None)
                 module_path = Path(module.__file__)
+                print(module_path)
 
                 try:
                     # Try to calculate the relative path
-                    if module.__name__.startswith("qureed"):
+                    if module.__name__.startswith("qureed.devices"):
                         module_name = module.__name__
                     else:
                         relative_path = module_path.relative_to(
                             project_root).with_suffix("")
                         module_name = ".".join(relative_path.parts)
+                        print(module_name)
+                        print(module_path)
+                        print(project_root)
                 except ValueError:
                     # Fallback to using the absolute path if outside project_root
+                    print(traceback.format_exc())
                     module_name = module.__name__
                 # Handle ports if defined
                 ports = []
@@ -610,7 +619,6 @@ class QuReedManager:
             module_name = ".".join(module_path)
 
             # Import the module dynamically
-            print(module_name)
             module = importlib.import_module(module_name)
 
             # Get the class from the module
@@ -620,6 +628,9 @@ class QuReedManager:
         except ModuleNotFoundError:
             traceback.print_exc()
             print(f"Module '{module_name}' not found.")
+            print(f"Module path: {module_path}")
+            print(f"Class Name: {class_name}")
+            print(traceback.format_exc())
             print(sys.path)
             print(sys.executable)
             raise

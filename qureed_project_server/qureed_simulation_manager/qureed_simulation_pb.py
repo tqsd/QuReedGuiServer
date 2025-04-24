@@ -22,7 +22,7 @@ class QuReedSimulationServicer(server_pb2_grpc.QuReedSimulationServicer):
                 status="success"
             )
         except Exception as e:
-            traceback.print_exc()
+            print(traceback.format_exc())
             return server_pb2.StartSimulationResponse(
                 status="failure",
                 message=f"Simulation Starting failed due to: {e}"

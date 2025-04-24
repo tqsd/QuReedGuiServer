@@ -62,8 +62,6 @@ class VenvManager:
         ------
            This method also imports the project into the system path
         """
-        print("CONNECTING")
-        print(path)
         self.path = path
         self.venv = VirtualEnvironment(path)
         # Add the 'custom' directory to sys.path
